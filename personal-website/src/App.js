@@ -1,6 +1,7 @@
+import { useRef } from 'react';
 import * as THREE from 'three';
-import { Canvas, useLoader } from '@react-three/fiber';
-import { OrbitControls, useTexture } from '@react-three/drei';
+import { Canvas, useLoader, useThree, useFrame } from '@react-three/fiber';
+import { /*OrbitControls,*/ useTexture } from '@react-three/drei';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { DDSLoader } from 'three-stdlib';
@@ -35,12 +36,28 @@ const Space = () => {
 };
 
 const Starship = () => {
+    const ref = useRef();
+    useThree(({ camera }) => {
+        camera.position.y = 8;
+        camera.position.z = -1;
+        camera.lookAt(0, 0, 0);
+    });
+    useFrame(({ camera }) => {
+        // console.log(ref.current.position);
+        // ref.current.position.y += 0.09;
+        // camera.position.y += 0.09;
+        // camera.lookAt(
+        //     ref.current.position.x,
+        //     ref.current.position.y,
+        //     ref.current.position.z
+        // );
+    });
     const materials = useLoader(MTLLoader, 'models/starship.mtl');
     const obj = useLoader(OBJLoader, 'models/starship.obj', (loader) => {
         materials.preload();
         loader.setMaterials(materials);
     });
-    return <primitive object={obj} scale={0.1} />;
+    return <primitive ref={ref} object={obj} scale={0.1} />;
 };
 
 function App() {
@@ -54,7 +71,7 @@ function App() {
                     <Starship />
                 </Suspense>
                 <ambientLight />
-                <OrbitControls />
+                {/*<OrbitControls />*/}
             </Canvas>
         </div>
     );
