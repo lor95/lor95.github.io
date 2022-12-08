@@ -1,7 +1,6 @@
 import * as THREE from 'three';
-import { Canvas } from '@react-three/fiber';
-import { useLoader } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { Canvas, useLoader } from '@react-three/fiber';
+import { OrbitControls, useTexture } from '@react-three/drei';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { DDSLoader } from 'three-stdlib';
@@ -17,6 +16,24 @@ const styles = StyleSheet.create({
 
 THREE.DefaultLoadingManager.addHandler(/\.dds$/i, new DDSLoader());
 
+const getWindowDimensions = () => {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+        width,
+        height,
+    };
+};
+
+const Space = () => {
+    let textureFile;
+    const dimensions = getWindowDimensions();
+    dimensions.width > dimensions.height
+        ? (textureFile = 'space-w.jpg')
+        : (textureFile = 'space-h.jpg');
+    const texture = useTexture(textureFile);
+    return <primitive attach="background" object={texture} />;
+};
+
 const Starship = () => {
     const materials = useLoader(MTLLoader, 'models/starship.mtl');
     const obj = useLoader(OBJLoader, 'models/starship.obj', (loader) => {
@@ -29,12 +46,15 @@ const Starship = () => {
 function App() {
     return (
         <div className={css(styles.app)}>
-            <Canvas>
+            <Canvas linear flat>
                 <Suspense fallback={null}>
-                    <ambientLight />
-                    <OrbitControls />
+                    <Space />
+                </Suspense>
+                <Suspense fallback={null}>
                     <Starship />
                 </Suspense>
+                <ambientLight />
+                <OrbitControls />
             </Canvas>
         </div>
     );
