@@ -1,12 +1,11 @@
-import { useRef } from 'react';
-import * as THREE from 'three';
-import { Canvas, useLoader, useThree, useFrame } from '@react-three/fiber';
-import { /*OrbitControls,*/ useTexture } from '@react-three/drei';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
-import { DDSLoader } from 'three-stdlib';
+// import * as THREE from 'three';
+import { Canvas } from '@react-three/fiber';
+import { Physics, RigidBody, Debug } from '@react-three/rapier';
+import { OrbitControls, useTexture, KeyboardControls } from '@react-three/drei';
+// import { DDSLoader } from 'three-stdlib';
 import { StyleSheet, css } from 'aphrodite';
 import { Suspense } from 'react';
+import { Starship } from './components';
 
 const styles = StyleSheet.create({
     app: {
@@ -15,7 +14,7 @@ const styles = StyleSheet.create({
     },
 });
 
-THREE.DefaultLoadingManager.addHandler(/\.dds$/i, new DDSLoader());
+// THREE.DefaultLoadingManager.addHandler(/\.dds$/i, new DDSLoader());
 
 const getWindowDimensions = () => {
     const { innerWidth: width, innerHeight: height } = window;
@@ -32,47 +31,72 @@ const Space = () => {
         ? (textureFile = 'space-w.jpg')
         : (textureFile = 'space-h.jpg');
     const texture = useTexture(textureFile);
-    return <primitive attach="background" object={texture} />;
+    return (
+        <Suspense fallback={null}>
+            <primitive attach="background" object={texture} />
+        </Suspense>
+    );
 };
 
-const Starship = () => {
-    const ref = useRef();
-    useThree(({ camera }) => {
-        camera.position.y = 8;
-        camera.position.z = -1;
-        camera.lookAt(0, 0, 0);
-    });
-    useFrame(({ camera }) => {
-        // console.log(ref.current.position);
-        // ref.current.position.y += 0.09;
-        // camera.position.y += 0.09;
-        // camera.lookAt(
-        //     ref.current.position.x,
-        //     ref.current.position.y,
-        //     ref.current.position.z
-        // );
-    });
-    const materials = useLoader(MTLLoader, 'models/starship.mtl');
-    const obj = useLoader(OBJLoader, 'models/starship.obj', (loader) => {
-        materials.preload();
-        loader.setMaterials(materials);
-    });
-    return <primitive ref={ref} object={obj} scale={0.1} />;
+const Planet = () => {
+    return (
+        <RigidBody colliders="hull">
+            <mesh position={[0, 5, 0]}>
+                <sphereBufferGeometry args={[0.7, 30, 30]} attach="geometry" />
+                <meshBasicMaterial color={0xff0000} attach="material" />
+            </mesh>
+        </RigidBody>
+    );
+};
+
+const Lights = () => {
+    return (
+        <>
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, -10, -20]} intensity={0.4} />
+            <pointLight position={[0, 10, 5]} intensity={0.4} />
+            <spotLight intensity={0.7} position={[0, 1000, 0]} />
+        </>
+    );
 };
 
 function App() {
     return (
         <div className={css(styles.app)}>
-            <Canvas linear flat>
-                <Suspense fallback={null}>
-                    <Space />
-                </Suspense>
-                <Suspense fallback={null}>
-                    <Starship />
-                </Suspense>
-                <ambientLight />
-                {/*<OrbitControls />*/}
-            </Canvas>
+            <KeyboardControls
+                map={[
+                    { name: 'forward', keys: ['ArrowUp', 'w', 'W'] },
+                    { name: 'backward', keys: ['ArrowDown', 's', 'S'] },
+                    { name: 'left', keys: ['ArrowLeft', 'a', 'A'] },
+                    { name: 'right', keys: ['ArrowRight', 'd', 'D'] },
+                ]}
+            >
+                <Canvas linear flat>
+                    <Physics gravity={[0, -6, 0]}>
+                        <Space />
+                        {/* <Planet /> */}
+                        <Starship />
+                        <Lights />
+                        {/* <Debug /> */}
+                        <RigidBody
+                            friction={0.4}
+                            type="fixed"
+                            position-y={-1}
+                            rotation={[-Math.PI / 2, 0, 0]}
+                        >
+                            <mesh receiveShadow castShadow>
+                                <boxGeometry args={[100, 100, 0.1]} />
+                                <meshStandardMaterial
+                                    color="gray"
+                                    transparent
+                                    opacity={0.8}
+                                />
+                            </mesh>
+                        </RigidBody>
+                        {<OrbitControls />}
+                    </Physics>
+                </Canvas>
+            </KeyboardControls>
         </div>
     );
 }
