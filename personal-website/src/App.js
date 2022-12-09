@@ -27,9 +27,7 @@ const getWindowDimensions = () => {
 const Space = () => {
     let textureFile;
     const dimensions = getWindowDimensions();
-    dimensions.width > dimensions.height
-        ? (textureFile = 'space-w.jpg')
-        : (textureFile = 'space-h.jpg');
+    dimensions.width > dimensions.height ? (textureFile = 'space-w.jpg') : (textureFile = 'space-h.jpg');
     const texture = useTexture(textureFile);
     return (
         <Suspense fallback={null}>
@@ -65,32 +63,23 @@ function App() {
         <div className={css(styles.app)}>
             <KeyboardControls
                 map={[
-                    { name: 'forward', keys: ['ArrowUp', 'w', 'W'] },
-                    { name: 'backward', keys: ['ArrowDown', 's', 'S'] },
-                    { name: 'left', keys: ['ArrowLeft', 'a', 'A'] },
-                    { name: 'right', keys: ['ArrowRight', 'd', 'D'] },
+                    { name: 'forward', keys: ['ArrowUp'] },
+                    { name: 'backward', keys: ['ArrowDown'] },
+                    { name: 'left', keys: ['ArrowLeft'] },
+                    { name: 'right', keys: ['ArrowRight'] },
                 ]}
             >
                 <Canvas linear flat>
-                    <Physics gravity={[0, -6, 0]}>
+                    <Physics gravity={[0, -10, 0]}>
                         <Space />
                         {/* <Planet /> */}
                         <Starship />
                         <Lights />
-                        {/* <Debug /> */}
-                        <RigidBody
-                            friction={0.4}
-                            type="fixed"
-                            position-y={-1}
-                            rotation={[-Math.PI / 2, 0, 0]}
-                        >
+                        <Debug />
+                        <RigidBody friction={0.2} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>
                             <mesh receiveShadow castShadow>
-                                <boxGeometry args={[100, 100, 0.1]} />
-                                <meshStandardMaterial
-                                    color="gray"
-                                    transparent
-                                    opacity={0.8}
-                                />
+                                <boxGeometry args={[1000, 1000, 0.1]} />
+                                <meshStandardMaterial color="gray" transparent opacity={0.2} />
                             </mesh>
                         </RigidBody>
                         {<OrbitControls />}
