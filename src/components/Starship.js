@@ -16,22 +16,23 @@ const Starship = () => {
     });
 
     useThree(({ camera }) => {
-        camera.position.y = 23;
-        camera.position.z = -1;
+        camera.position.y = 35;
         camera.lookAt(0, 0, 0);
     });
 
-    useFrame(() => {
-        let linvel = { x: 0, z: 0 };
+    useFrame(({ camera }) => {
         let angvel = 0;
+        let linvel = { x: 0, z: 0 };
         const currentLinvel = bodyRef.current?.linvel();
         const currentAngvel = bodyRef.current?.angvel();
         const { forward, backward, left, right } = getKeys();
         if (forward) {
             linvel.x += 0.5;
+            linvel.z += 0.5;
         }
         if (backward) {
             linvel.x -= 0.5;
+            linvel.z -= 0.5;
         }
         if (left) {
             angvel += 0.5;
@@ -39,7 +40,7 @@ const Starship = () => {
         if (right) {
             angvel -= 0.5;
         }
-        console.log(bodyRef.current?.rotation());
+        //console.log(bodyRef.current?.rotation());
         //bodyRef.current?.setLinvel({
         //    ...bodyRef.current?.linvel(),
         //    ...{ x: 10 },
@@ -56,11 +57,23 @@ const Starship = () => {
                 y: angvel,
                 z: 0,
             });
+        const currentPosition = bodyRef.current?.translation();
+        camera.position.z = currentPosition.z - 35;
+        camera.position.x = currentPosition.x;
+        camera.lookAt(currentPosition.x, currentPosition.y, currentPosition.z);
+        camera.updateProjectionMatrix();
     });
 
     return (
-        <RigidBody type="dynamic" ref={bodyRef} colliders="hull">
-            <primitive object={obj} scale={0.6} rotation={[0, -Math.PI / 2, 0]} castShadow receiveShadow />
+        <RigidBody friction={0.1} type="dynamic" ref={bodyRef} colliders="hull">
+            <primitive
+                position={[0, 4, 0]}
+                object={obj}
+                scale={0.6}
+                rotation={[0, -Math.PI / 2, 0]}
+                castShadow
+                receiveShadow
+            />
         </RigidBody>
     );
 };

@@ -1,11 +1,12 @@
 // import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
 import { Physics, RigidBody, Debug } from '@react-three/rapier';
-import { OrbitControls, useTexture, KeyboardControls } from '@react-three/drei';
+import { OrbitControls, KeyboardControls } from '@react-three/drei';
 // import { DDSLoader } from 'three-stdlib';
 import { StyleSheet, css } from 'aphrodite';
-import { Suspense } from 'react';
-import { Starship } from './components';
+import { Starship, Planet, Space } from './components';
+
+const debug = false;
 
 const styles = StyleSheet.create({
     app: {
@@ -15,37 +16,6 @@ const styles = StyleSheet.create({
 });
 
 // THREE.DefaultLoadingManager.addHandler(/\.dds$/i, new DDSLoader());
-
-const getWindowDimensions = () => {
-    const { innerWidth: width, innerHeight: height } = window;
-    return {
-        width,
-        height,
-    };
-};
-
-const Space = () => {
-    let textureFile;
-    const dimensions = getWindowDimensions();
-    dimensions.width > dimensions.height ? (textureFile = 'space-w.jpg') : (textureFile = 'space-h.jpg');
-    const texture = useTexture(textureFile);
-    return (
-        <Suspense fallback={null}>
-            <primitive attach="background" object={texture} />
-        </Suspense>
-    );
-};
-
-const Planet = () => {
-    return (
-        <RigidBody colliders="hull">
-            <mesh position={[0, 5, 0]}>
-                <sphereBufferGeometry args={[0.7, 30, 30]} attach="geometry" />
-                <meshBasicMaterial color={0xff0000} attach="material" />
-            </mesh>
-        </RigidBody>
-    );
-};
 
 const Lights = () => {
     return (
@@ -69,20 +39,21 @@ function App() {
                     { name: 'right', keys: ['ArrowRight'] },
                 ]}
             >
-                <Canvas linear flat>
-                    <Physics gravity={[0, -10, 0]}>
+                <Canvas linear flat resize={{ scroll: false }}>
+                    <Physics gravity={[0, -40, 0]}>
                         <Space />
-                        {/* <Planet /> */}
+                        <Planet />
                         <Starship />
                         <Lights />
-                        <Debug />
-                        <RigidBody friction={0.2} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>
+                        {debug && <Debug />}
+
+                        <RigidBody friction={0} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>
                             <mesh receiveShadow castShadow>
-                                <boxGeometry args={[1000, 1000, 0.1]} />
-                                <meshStandardMaterial color="gray" transparent opacity={0.2} />
+                                <boxGeometry args={[1000, 1000, 9]} />
+                                <meshStandardMaterial color="gray" transparent opacity={debug ? 0.5 : 0} />
                             </mesh>
                         </RigidBody>
-                        {<OrbitControls />}
+                        {debug && <OrbitControls />}
                     </Physics>
                 </Canvas>
             </KeyboardControls>
