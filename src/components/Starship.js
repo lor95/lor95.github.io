@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import * as THREE from 'three';
 import { useKeyboardControls } from '@react-three/drei';
 import { RigidBody } from '@react-three/rapier';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
@@ -6,7 +7,12 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 
 const Starship = () => {
-    const bodyRef = useRef(null);
+    const bodyRef = useRef();
+
+    const mainQuaternion = new THREE.Quaternion();
+    mainQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+    const refQuaternion = new THREE.Quaternion();
+    refQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0);
 
     const [, getKeys] = useKeyboardControls();
     const materials = useLoader(MTLLoader, 'models/starship.mtl');
@@ -25,6 +31,16 @@ const Starship = () => {
         let linvel = { x: 0, z: 0 };
         const currentLinvel = bodyRef.current?.linvel();
         const currentAngvel = bodyRef.current?.angvel();
+        const currentRotation = bodyRef.current?.rotation();
+
+        const dirVec = {
+            x: currentRotation.angleTo(refQuaternion) >= Math.PI / 2 ? 1 : -1,
+            y: 0,
+            z: currentRotation.angleTo(mainQuaternion) <= Math.PI / 2 ? 1 : -1,
+        };
+
+        console.log(dirVec);
+
         const { forward, backward, left, right } = getKeys();
         if (forward) {
             linvel.x += 0.5;
@@ -40,11 +56,6 @@ const Starship = () => {
         if (right) {
             angvel -= 0.5;
         }
-        //console.log(bodyRef.current?.rotation());
-        //bodyRef.current?.setLinvel({
-        //    ...bodyRef.current?.linvel(),
-        //    ...{ x: 10 },
-        //});
         Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 20 &&
             bodyRef.current?.applyImpulse({
                 x: linvel.x,

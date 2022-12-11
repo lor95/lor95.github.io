@@ -15,7 +15,7 @@ const Planet = () => {
     });
     return (
         <Suspense fallback={null}>
-            <mesh position={[23, 5, 14]} ref={planetRef}>
+            <mesh position={[23, 5, 14]} ref={planetRef} receiveShadow castShadow>
                 <sphereBufferGeometry args={[10, 60, 40]} attach="geometry" />
                 <meshPhysicalMaterial map={base} />
             </mesh>
