@@ -10,9 +10,9 @@ const Starship = () => {
     const bodyRef = useRef();
 
     const mainQuaternion = new THREE.Quaternion();
-    mainQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+    mainQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0);
     const refQuaternion = new THREE.Quaternion();
-    refQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0);
+    refQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
 
     const [, getKeys] = useKeyboardControls();
     const materials = useLoader(MTLLoader, 'models/starship.mtl');
@@ -34,21 +34,23 @@ const Starship = () => {
         const currentRotation = bodyRef.current?.rotation();
 
         const dirVec = {
-            x: currentRotation.angleTo(refQuaternion) >= Math.PI / 2 ? 1 : -1,
-            y: 0,
-            z: currentRotation.angleTo(mainQuaternion) <= Math.PI / 2 ? 1 : -1,
+            x: currentRotation.angleTo(mainQuaternion) >= Math.PI / 2 ? 1 : -1,
+            z: currentRotation.angleTo(refQuaternion) <= Math.PI / 2 ? 1 : -1,
         };
 
-        console.log(dirVec);
+        const angle =
+            dirVec.z > 0
+                ? currentRotation.angleTo(mainQuaternion)
+                : Math.PI + Math.abs(Math.PI - currentRotation.angleTo(mainQuaternion));
 
         const { forward, backward, left, right } = getKeys();
         if (forward) {
-            linvel.x += 0.5;
-            linvel.z += 0.5;
+            linvel.x += Math.abs(Math.cos(angle)) * dirVec.x;
+            linvel.z += Math.abs(Math.sin(angle)) * dirVec.z;
         }
         if (backward) {
-            linvel.x -= 0.5;
-            linvel.z -= 0.5;
+            linvel.x -= Math.abs(Math.cos(angle)) * dirVec.x * 0.6;
+            linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * 0.6;
         }
         if (left) {
             angvel += 0.5;
@@ -62,7 +64,7 @@ const Starship = () => {
                 y: 0,
                 z: linvel.z,
             });
-        Math.abs(currentAngvel.y) < 8 &&
+        Math.abs(currentAngvel.y) < 4 &&
             bodyRef.current?.applyTorqueImpulse({
                 x: 0,
                 y: angvel,
