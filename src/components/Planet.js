@@ -1,13 +1,13 @@
-import * as THREE from 'three';
+import { useFrame, useLoader } from '@react-three/fiber';
 import { Suspense, useRef } from 'react';
-import { useLoader, useFrame } from '@react-three/fiber';
+import { RepeatWrapping, TextureLoader } from 'three';
 
 const Planet = () => {
     // https://codesandbox.io/s/textured-sphere-jsy9s?from-embed
     const planetRef = useRef();
-    const base = useLoader(THREE.TextureLoader, '/water-texture.jpg');
-    base.wrapS = THREE.RepeatWrapping;
-    base.wrapT = THREE.RepeatWrapping;
+    const base = useLoader(TextureLoader, '/water-texture.jpg');
+    base.wrapS = RepeatWrapping;
+    base.wrapT = RepeatWrapping;
     base.repeat.set(4, 2);
     useFrame(() => {
         planetRef.current.rotation.y += 0.0001;
@@ -16,7 +16,7 @@ const Planet = () => {
     return (
         <Suspense fallback={null}>
             <mesh position={[23, 5, 14]} ref={planetRef} receiveShadow castShadow>
-                <sphereBufferGeometry args={[10, 60, 40]} attach="geometry" />
+                <sphereGeometry args={[10, 60, 40]} attach="geometry" />
                 <meshPhysicalMaterial map={base} />
             </mesh>
         </Suspense>

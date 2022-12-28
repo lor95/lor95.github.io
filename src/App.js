@@ -1,10 +1,11 @@
 // import * as THREE from 'three';
+import { KeyboardControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { Physics, RigidBody, Debug } from '@react-three/rapier';
-import { OrbitControls, KeyboardControls } from '@react-three/drei';
+import { Debug, Physics, RigidBody } from '@react-three/rapier';
 // import { DDSLoader } from 'three-stdlib';
 import { StyleSheet, css } from 'aphrodite';
-import { Starship, Planet, Space } from './components';
+
+import { Planet, Space, Starship } from './components';
 
 const debug = false;
 
@@ -53,7 +54,6 @@ function App() {
                                 <meshStandardMaterial color="gray" transparent opacity={debug ? 0.5 : 0} />
                             </mesh>
                         </RigidBody>
-                        {debug && <OrbitControls />}
                     </Physics>
                 </Canvas>
             </KeyboardControls>

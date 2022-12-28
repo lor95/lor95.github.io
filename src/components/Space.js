@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
 import { useTexture } from '@react-three/drei';
+import { Suspense } from 'react';
 
 const getWindowDimensions = () => {
     const { innerWidth: width, innerHeight: height } = window;

@@ -1,18 +1,20 @@
-import { useRef } from 'react';
-import * as THREE from 'three';
 import { useKeyboardControls } from '@react-three/drei';
-import { RigidBody } from '@react-three/rapier';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { RigidBody } from '@react-three/rapier';
+import { useRef } from 'react';
+import { Quaternion, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+
+const v = new Vector3();
 
 const Starship = () => {
     const bodyRef = useRef();
 
-    const mainQuaternion = new THREE.Quaternion();
-    mainQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0);
-    const refQuaternion = new THREE.Quaternion();
-    refQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+    const mainQuaternion = new Quaternion();
+    mainQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), 0);
+    const refQuaternion = new Quaternion();
+    refQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
 
     const [, getKeys] = useKeyboardControls();
     const materials = useLoader(MTLLoader, 'models/starship.mtl');
@@ -22,11 +24,12 @@ const Starship = () => {
     });
 
     useThree(({ camera }) => {
-        camera.position.y = 35;
+        camera.position.y = 50;
+        camera.position.z = 25;
         camera.lookAt(0, 0, 0);
     });
 
-    useFrame(({ camera }) => {
+    useFrame(({ camera }, delta) => {
         let angvel = 0;
         let linvel = { x: 0, z: 0 };
         const currentLinvel = bodyRef.current?.linvel();
@@ -45,18 +48,18 @@ const Starship = () => {
 
         const { forward, backward, left, right } = getKeys();
         if (forward) {
-            linvel.x += Math.abs(Math.cos(angle)) * dirVec.x;
-            linvel.z += Math.abs(Math.sin(angle)) * dirVec.z;
+            linvel.x += Math.abs(Math.cos(angle)) * dirVec.x * delta * 80;
+            linvel.z += Math.abs(Math.sin(angle)) * dirVec.z * delta * 80;
         }
         if (backward) {
-            linvel.x -= Math.abs(Math.cos(angle)) * dirVec.x * 0.6;
-            linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * 0.6;
+            linvel.x -= Math.abs(Math.cos(angle)) * dirVec.x * delta * 30;
+            linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * delta * 30;
         }
         if (left) {
-            angvel += 0.5;
+            angvel += delta * 20;
         }
         if (right) {
-            angvel -= 0.5;
+            angvel -= delta * 20;
         }
         Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 20 &&
             bodyRef.current?.applyImpulse({
@@ -71,10 +74,8 @@ const Starship = () => {
                 z: 0,
             });
         const currentPosition = bodyRef.current?.translation();
-        camera.position.z = currentPosition.z - 35;
-        camera.position.x = currentPosition.x;
-        camera.lookAt(currentPosition.x, currentPosition.y, currentPosition.z);
-        camera.updateProjectionMatrix();
+        v.set(currentPosition.x, 50, currentPosition.z + 25);
+        camera.position.lerp(v, delta * 2);
     });
 
     return (
