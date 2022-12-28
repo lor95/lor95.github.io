@@ -1,15 +1,72 @@
 import { useKeyboardControls } from '@react-three/drei';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { RigidBody } from '@react-three/rapier';
-import { useRef } from 'react';
-import { Quaternion, Vector3 } from 'three';
+import { useMemo, useRef } from 'react';
+import { MathUtils, Quaternion, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
-const v = new Vector3();
+const EngineSmokeParticles = (props) => {
+    const { count } = props;
+    const points = useRef();
+
+    let particlesPosition = useMemo(() => {
+        const positions = new Float32Array(count * 3);
+        const distance = 1;
+
+        for (let i = 0; i < count; i++) {
+            const theta = MathUtils.randFloatSpread(2);
+            const phi = MathUtils.randFloatSpread(2);
+
+            let x = distance * Math.sin(theta) * Math.cos(phi);
+            let y = distance * Math.sin(theta) * Math.sin(phi);
+            let z = distance * Math.cos(theta);
+
+            positions.set([x, y, z], i * 0.1);
+        }
+
+        return positions;
+    }, [count]);
+
+    // setInterval(() => {
+    //     count = count - 1;
+    // }, 20);
+
+    useFrame((state) => {
+        const { clock } = state;
+
+        for (let i = 0; i < count; i++) {
+            const i3 = i * 3;
+
+            points.current.geometry.attributes.position.array[i3] +=
+                Math.sin(clock.elapsedTime + Math.random() * 50) * 0.06;
+            points.current.geometry.attributes.position.array[i3 + 1] +=
+                Math.cos(clock.elapsedTime + Math.random() * 50) * 0.06;
+            points.current.geometry.attributes.position.array[i3 + 2] +=
+                Math.sin(clock.elapsedTime + Math.random() * 50) * 0.06;
+        }
+
+        points.current.geometry.attributes.position.needsUpdate = true;
+    });
+
+    return (
+        <points ref={points}>
+            <bufferGeometry>
+                <bufferAttribute
+                    attach="attributes-position"
+                    count={particlesPosition.length / 3}
+                    array={particlesPosition}
+                    itemSize={3}
+                />
+            </bufferGeometry>
+            <pointsMaterial size={0.012} color="#ffffff" sizeAttenuation depthWrite={false} />
+        </points>
+    );
+};
 
 const Starship = () => {
     const bodyRef = useRef();
+    const v = new Vector3();
 
     const mainQuaternion = new Quaternion();
     mainQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), 0);
@@ -79,16 +136,19 @@ const Starship = () => {
     });
 
     return (
-        <RigidBody friction={0.1} type="dynamic" ref={bodyRef} colliders="hull">
-            <primitive
-                position={[0, 4, 0]}
-                object={obj}
-                scale={0.6}
-                rotation={[0, -Math.PI / 2, 0]}
-                castShadow
-                receiveShadow
-            />
-        </RigidBody>
+        <>
+            <RigidBody friction={0.1} type="dynamic" ref={bodyRef} colliders="hull">
+                <primitive
+                    position={[0, 4, 0]}
+                    object={obj}
+                    scale={0.6}
+                    rotation={[0, -Math.PI / 2, 0]}
+                    castShadow
+                    receiveShadow
+                />
+            </RigidBody>
+            {/* <EngineSmokeParticles count={80} /> */}
+        </>
     );
 };
 
