@@ -1,72 +1,91 @@
 import { useKeyboardControls } from '@react-three/drei';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { RigidBody } from '@react-three/rapier';
-import { useMemo, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { MathUtils, Quaternion, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
-const EngineSmokeParticles = (props) => {
-    const { count } = props;
+const EngineSmokeParticles = ({ count }) => {
     const points = useRef();
+    const [visible, setVisible] = useState(true);
 
-    let particlesPosition = useMemo(() => {
+    const generateParticles = () => {
         const positions = new Float32Array(count * 3);
-        const distance = 1;
 
         for (let i = 0; i < count; i++) {
             const theta = MathUtils.randFloatSpread(2);
             const phi = MathUtils.randFloatSpread(2);
 
-            let x = distance * Math.sin(theta) * Math.cos(phi);
-            let y = distance * Math.sin(theta) * Math.sin(phi);
-            let z = distance * Math.cos(theta);
+            let x = Math.sin(theta) * Math.cos(phi);
+            let y = Math.sin(theta) * Math.sin(phi);
+            let z = Math.cos(theta);
 
             positions.set([x, y, z], i * 0.1);
         }
 
         return positions;
-    }, [count]);
+    };
 
-    // setInterval(() => {
-    //     count = count - 1;
-    // }, 20);
+    let particlesPosition = generateParticles();
+
+    const intervalId = setInterval(() => {
+        if (visible) {
+            let pointsArr = Array.from(points.current.geometry.attributes.position.array);
+            const currentIndex = Math.random() * pointsArr.length;
+            pointsArr.splice(Math.floor(currentIndex, 1), 3);
+
+            points.current.geometry.attributes.position.array = new Float32Array(pointsArr);
+            particlesPosition = new Float32Array(pointsArr);
+
+            points.current.geometry.dispose();
+
+            if (particlesPosition.length === 0) {
+                clearInterval(intervalId);
+                setVisible(false);
+            }
+        }
+    }, 30);
 
     useFrame((state) => {
-        const { clock } = state;
+        if (visible) {
+            const { clock } = state;
 
-        for (let i = 0; i < count; i++) {
-            const i3 = i * 3;
+            for (let i = 0; i < particlesPosition.length / 3; i++) {
+                const i3 = i * 3;
 
-            points.current.geometry.attributes.position.array[i3] +=
-                Math.sin(clock.elapsedTime + Math.random() * 50) * 0.06;
-            points.current.geometry.attributes.position.array[i3 + 1] +=
-                Math.cos(clock.elapsedTime + Math.random() * 50) * 0.06;
-            points.current.geometry.attributes.position.array[i3 + 2] +=
-                Math.sin(clock.elapsedTime + Math.random() * 50) * 0.06;
+                points.current.geometry.attributes.position.array[i3] +=
+                    Math.sin(clock.elapsedTime + Math.random() * 50) * 0.06;
+                points.current.geometry.attributes.position.array[i3 + 1] +=
+                    Math.cos(clock.elapsedTime + Math.random() * 50) * 0.06;
+                points.current.geometry.attributes.position.array[i3 + 2] +=
+                    Math.sin(clock.elapsedTime + Math.random() * 50) * 0.06;
+            }
+
+            points.current.geometry.attributes.position.needsUpdate = true;
         }
-
-        points.current.geometry.attributes.position.needsUpdate = true;
     });
 
     return (
-        <points ref={points}>
-            <bufferGeometry>
-                <bufferAttribute
-                    attach="attributes-position"
-                    count={particlesPosition.length / 3}
-                    array={particlesPosition}
-                    itemSize={3}
-                />
-            </bufferGeometry>
-            <pointsMaterial size={0.012} color="#ffffff" sizeAttenuation depthWrite={false} />
-        </points>
+        visible && (
+            <points ref={points}>
+                <bufferGeometry>
+                    <bufferAttribute
+                        attach="attributes-position"
+                        count={particlesPosition.length / 3}
+                        array={particlesPosition}
+                        itemSize={3}
+                    />
+                </bufferGeometry>
+                <pointsMaterial size={0.012} color="#ffffff" sizeAttenuation depthWrite={false} />
+            </points>
+        )
     );
 };
 
 const Starship = () => {
     const bodyRef = useRef();
-    const v = new Vector3();
+    const defaultVector = new Vector3();
 
     const mainQuaternion = new Quaternion();
     mainQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), 0);
@@ -86,7 +105,7 @@ const Starship = () => {
         camera.lookAt(0, 0, 0);
     });
 
-    useFrame(({ camera }, delta) => {
+    useFrame(({ gl, camera }, delta) => {
         let angvel = 0;
         let linvel = { x: 0, z: 0 };
         const currentLinvel = bodyRef.current?.linvel();
@@ -131,8 +150,9 @@ const Starship = () => {
                 z: 0,
             });
         const currentPosition = bodyRef.current?.translation();
-        v.set(currentPosition.x, 50, currentPosition.z + 25);
-        camera.position.lerp(v, delta * 2);
+        defaultVector.set(currentPosition.x, 50, currentPosition.z + 25);
+        camera.position.lerp(defaultVector, delta * 2);
+        debugger;
     });
 
     return (
@@ -147,7 +167,7 @@ const Starship = () => {
                     receiveShadow
                 />
             </RigidBody>
-            {/* <EngineSmokeParticles count={80} /> */}
+            <EngineSmokeParticles count={80} />
         </>
     );
 };
