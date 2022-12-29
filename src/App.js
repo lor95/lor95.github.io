@@ -38,6 +38,7 @@ function App() {
                     { name: 'backward', keys: ['ArrowDown'] },
                     { name: 'left', keys: ['ArrowLeft'] },
                     { name: 'right', keys: ['ArrowRight'] },
+                    { name: 'fire', keys: ['Space'] },
                 ]}
             >
                 <Canvas linear flat resize={{ scroll: false }}>
