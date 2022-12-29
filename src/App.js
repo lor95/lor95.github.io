@@ -42,7 +42,7 @@ function App() {
             >
                 <Canvas linear flat resize={{ scroll: false }}>
                     <Physics gravity={[0, -40, 0]}>
-                        <Space />
+                        <Space id="space" />
                         <Planet />
                         <Starship />
                         <Lights />

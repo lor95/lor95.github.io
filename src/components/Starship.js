@@ -1,12 +1,26 @@
 import { useKeyboardControls } from '@react-three/drei';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { RigidBody } from '@react-three/rapier';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { MathUtils, Quaternion, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import create from 'zustand';
 
-const EngineSmokeParticles = ({ count }) => {
+const useSmoke = create((set) => ({
+    smoke: [],
+    addSmoke: (x, y, z) => set((state) => ({ smoke: [...state.smoke, [x, y, z]] })),
+}));
+
+const EngineSmokeParticles = () => {
+    const smoke = useSmoke((state) => state.smoke);
+    return smoke.map((coords, index) => {
+        console.log(coords);
+        return <EngineSmokeParticle key={index} position={coords} count={80} />;
+    });
+};
+
+const EngineSmokeParticle = ({ position, count }) => {
     const points = useRef();
     const [visible, setVisible] = useState(true);
 
@@ -33,19 +47,19 @@ const EngineSmokeParticles = ({ count }) => {
         if (visible) {
             let pointsArr = Array.from(points.current.geometry.attributes.position.array);
             const currentIndex = Math.random() * pointsArr.length;
-            pointsArr.splice(Math.floor(currentIndex, 1), 3);
+            pointsArr.splice(Math.floor(currentIndex, 1), 5);
 
             points.current.geometry.attributes.position.array = new Float32Array(pointsArr);
             particlesPosition = new Float32Array(pointsArr);
-
-            points.current.geometry.dispose();
 
             if (particlesPosition.length === 0) {
                 clearInterval(intervalId);
                 setVisible(false);
             }
+
+            points.current.geometry.dispose();
         }
-    }, 30);
+    }, 20);
 
     useFrame((state) => {
         if (visible) {
@@ -68,7 +82,7 @@ const EngineSmokeParticles = ({ count }) => {
 
     return (
         visible && (
-            <points ref={points}>
+            <points ref={points} position={position}>
                 <bufferGeometry>
                     <bufferAttribute
                         attach="attributes-position"
@@ -105,7 +119,21 @@ const Starship = () => {
         camera.lookAt(0, 0, 0);
     });
 
-    useFrame(({ gl, camera }, delta) => {
+    const addSmoke = useSmoke((state) => state.addSmoke);
+    const engineThrottle = useCallback(
+        ({ x, y, z }) => {
+            addSmoke(x, y, z);
+        },
+        [addSmoke]
+    );
+
+    setInterval(() => {
+        const currentPosition = bodyRef.current?.translation();
+        console.log(bodyRef.current.translation());
+        engineThrottle({ x: currentPosition.x, y: currentPosition.y, z: currentPosition.z });
+    }, 10000);
+
+    useFrame(({ camera }, delta) => {
         let angvel = 0;
         let linvel = { x: 0, z: 0 };
         const currentLinvel = bodyRef.current?.linvel();
@@ -152,7 +180,6 @@ const Starship = () => {
         const currentPosition = bodyRef.current?.translation();
         defaultVector.set(currentPosition.x, 50, currentPosition.z + 25);
         camera.position.lerp(defaultVector, delta * 2);
-        debugger;
     });
 
     return (
@@ -167,7 +194,7 @@ const Starship = () => {
                     receiveShadow
                 />
             </RigidBody>
-            <EngineSmokeParticles count={80} />
+            <EngineSmokeParticles />
         </>
     );
 };
