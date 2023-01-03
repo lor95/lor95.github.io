@@ -1,51 +1,15 @@
 import { useKeyboardControls } from '@react-three/drei';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
-import { RigidBody } from '@react-three/rapier';
-import { useCallback, useRef, useState } from 'react';
+import { MeshCollider, RigidBody, interactionGroups } from '@react-three/rapier';
+import { useCallback, useRef } from 'react';
 import { Euler, Quaternion, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import create from 'zustand';
 
-const useLaser = create((set) => ({
-    laser: [],
-    addLaser: (props) => set((state) => ({ laser: [...state.laser, props] })),
-}));
+import { Lasers, useLaser } from './Lasers';
 
-const Lasers = () => {
-    const laser = useLaser((state) => state.laser);
-    return laser.map((props, index) => (
-        <Laser key={index} position={props.position} rotation={props.rotation} direction={props.direction} />
-    ));
-};
-
-const Laser = ({ position, rotation, direction }) => {
-    const obj = useRef();
-    const [visible, setVisible] = useState(true);
-
-    setTimeout(() => {
-        setVisible(false);
-    }, 1000);
-
-    useFrame(() => {
-        if (obj && visible) {
-            obj.current.position.x += direction.x * 1.1;
-            obj.current.position.z += direction.z * 1.1;
-        }
-    });
-
-    return (
-        visible && (
-            <mesh position={position} rotation={rotation} rotation-z={-Math.PI / 2} ref={obj}>
-                <cylinderGeometry args={[0.1, 0.1, 2.5, 8]} attach="geometry" />
-                <meshPhysicalMaterial color="#ff0000" />
-            </mesh>
-        )
-    );
-};
-
-const Starship = () => {
-    const bodyRef = useRef();
+export const Starship = (props) => {
+    const starshipBody = useRef();
     const defaultVector = new Vector3();
     let canFire = true;
 
@@ -56,7 +20,7 @@ const Starship = () => {
 
     const [, getKeys] = useKeyboardControls();
     const materials = useLoader(MTLLoader, 'models/starship.mtl');
-    const obj = useLoader(OBJLoader, 'models/starship.obj', (loader) => {
+    const starship = useLoader(OBJLoader, 'models/starship.obj', (loader) => {
         materials.preload();
         loader.setMaterials(materials);
     });
@@ -78,12 +42,14 @@ const Starship = () => {
     useFrame(({ camera }, delta) => {
         let angvel = 0;
         let linvel = { x: 0, z: 0 };
-        const currentLinvel = bodyRef.current?.linvel();
-        const currentAngvel = bodyRef.current?.angvel();
-        const currentRotation = bodyRef.current?.rotation();
-        const currentPosition = bodyRef.current?.translation();
-        defaultVector.set(currentPosition.x, 50, currentPosition.z + 25);
-        camera.position.lerp(defaultVector, delta * 2);
+        const currentLinvel = starshipBody.current?.linvel();
+        const currentAngvel = starshipBody.current?.angvel();
+        const currentRotation = starshipBody.current?.rotation();
+        const currentPosition = starshipBody.current?.translation();
+        if (!props.debug) {
+            defaultVector.set(currentPosition.x, 50, currentPosition.z + 25);
+            camera.position.lerp(defaultVector, delta * 2);
+        }
 
         const dirVec = {
             x: currentRotation.angleTo(mainQuaternion) >= Math.PI / 2 ? 1 : -1,
@@ -112,7 +78,7 @@ const Starship = () => {
         }
         if (fire && canFire) {
             fireLaser({
-                position: currentPosition,
+                position: [currentPosition.x, currentPosition.y + 3.8, currentPosition.z],
                 rotation: new Euler().setFromQuaternion(currentRotation, 'XYZ'),
                 direction: {
                     x: Math.abs(Math.cos(angle)) * dirVec.x,
@@ -122,16 +88,16 @@ const Starship = () => {
             canFire = false;
             setTimeout(() => {
                 canFire = true;
-            }, 300);
+            }, 250);
         }
         Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 20 &&
-            bodyRef.current?.applyImpulse({
+            starshipBody.current?.applyImpulse({
                 x: linvel.x,
                 y: 0,
                 z: linvel.z,
             });
         Math.abs(currentAngvel.y) < 4 &&
-            bodyRef.current?.applyTorqueImpulse({
+            starshipBody.current?.applyTorqueImpulse({
                 x: 0,
                 y: angvel,
                 z: 0,
@@ -140,19 +106,25 @@ const Starship = () => {
 
     return (
         <>
-            <RigidBody friction={0.1} type="dynamic" ref={bodyRef} colliders="hull">
-                <primitive
-                    position={[0, 4, 0]}
-                    object={obj}
-                    scale={0.6}
-                    rotation={[0, -Math.PI / 2, 0]}
-                    castShadow
-                    receiveShadow
-                />
+            <RigidBody name="starship" friction={0.1} ref={starshipBody}>
+                <MeshCollider
+                    type="hull"
+                    collisionGroups={interactionGroups([0], [])}
+                    onIntersectionEnter={({ rigidBodyObject }) => {
+                        console.log('starship', rigidBodyObject);
+                    }}
+                >
+                    <primitive
+                        position={[0, 4, 0]}
+                        object={starship}
+                        scale={0.6}
+                        rotation={[0, -Math.PI / 2, 0]}
+                        castShadow
+                        receiveShadow
+                    />
+                </MeshCollider>
             </RigidBody>
             <Lasers />
         </>
     );
 };
-
-export default Starship;

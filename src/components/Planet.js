@@ -1,26 +1,33 @@
 import { useFrame, useLoader } from '@react-three/fiber';
-import { Suspense, useRef } from 'react';
+import { BallCollider, RigidBody, interactionGroups } from '@react-three/rapier';
+import { useRef } from 'react';
 import { RepeatWrapping, TextureLoader } from 'three';
 
-const Planet = () => {
+export const Planet = (props) => {
     // https://codesandbox.io/s/textured-sphere-jsy9s?from-embed
-    const planetRef = useRef();
-    const base = useLoader(TextureLoader, '/water-texture.jpg');
+    const planet = useRef();
+    const base = useLoader(TextureLoader, 'images/water-texture.jpg');
     base.wrapS = RepeatWrapping;
     base.wrapT = RepeatWrapping;
     base.repeat.set(4, 2);
     useFrame(() => {
-        planetRef.current.rotation.y += 0.0001;
-        planetRef.current.rotation.z += 0.0006;
+        planet.current.rotation.y += 0.0001;
+        planet.current.rotation.z += 0.0006;
     });
     return (
-        <Suspense fallback={null}>
-            <mesh position={[23, 5, 14]} ref={planetRef} receiveShadow castShadow>
-                <sphereGeometry args={[10, 60, 40]} attach="geometry" />
+        <RigidBody name={`planet_${props.name}`} position={props.position} mass={0}>
+            <mesh position={props.position} ref={planet} receiveShadow castShadow>
+                <sphereGeometry args={props.dimensions} attach="geometry" />
                 <meshPhysicalMaterial map={base} />
+                <BallCollider
+                    args={props.dimensions}
+                    sensor
+                    collisionGroups={interactionGroups([2], [1])}
+                    onIntersectionEnter={({ rigidBodyObject }) => {
+                        console.log('planet', rigidBodyObject);
+                    }}
+                />
             </mesh>
-        </Suspense>
+        </RigidBody>
     );
 };
-
-export default Planet;

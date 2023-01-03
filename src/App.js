@@ -1,13 +1,14 @@
 // import * as THREE from 'three';
 import { KeyboardControls } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { Debug, Physics, RigidBody } from '@react-three/rapier';
+import { Debug, Physics } from '@react-three/rapier';
 // import { DDSLoader } from 'three-stdlib';
 import { StyleSheet, css } from 'aphrodite';
 
-import { Planet, Space, Starship } from './components';
+import { Space } from './components/Space';
 
-const debug = false;
+const debug = true;
 
 const styles = StyleSheet.create({
     app: {
@@ -42,19 +43,11 @@ function App() {
                 ]}
             >
                 <Canvas linear flat resize={{ scroll: false }}>
-                    <Physics gravity={[0, -40, 0]}>
-                        <Space id="space" />
-                        <Planet />
-                        <Starship />
+                    <Physics colliders={false} gravity={[0, -40, 0]}>
+                        <Space debug={debug} />
                         <Lights />
                         {debug && <Debug />}
-
-                        <RigidBody friction={0} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>
-                            <mesh receiveShadow castShadow>
-                                <boxGeometry args={[1000, 1000, 9]} />
-                                <meshStandardMaterial color="gray" transparent opacity={debug ? 0.5 : 0} />
-                            </mesh>
-                        </RigidBody>
+                        {debug && <OrbitControls />}
                     </Physics>
                 </Canvas>
             </KeyboardControls>

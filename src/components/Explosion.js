@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { useRef, useState } from 'react';
 import { MathUtils } from 'three';
 
-const Explosion = ({ position, count }) => {
+export const Explosion = ({ position, count }) => {
     const points = useRef();
     const [visible, setVisible] = useState(true);
 
@@ -78,5 +78,3 @@ const Explosion = ({ position, count }) => {
         )
     );
 };
-
-export default Explosion;
