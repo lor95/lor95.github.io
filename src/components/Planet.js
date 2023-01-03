@@ -1,5 +1,5 @@
 import { useFrame, useLoader } from '@react-three/fiber';
-import { BallCollider, RigidBody, interactionGroups } from '@react-three/rapier';
+import { BallCollider, RigidBody } from '@react-three/rapier';
 import { useRef } from 'react';
 import { RepeatWrapping, TextureLoader } from 'three';
 
@@ -15,16 +15,16 @@ export const Planet = (props) => {
         planet.current.rotation.z += 0.0006;
     });
     return (
-        <RigidBody name={`planet_${props.name}`} position={props.position} mass={0}>
+        <RigidBody position={props.position} mass={0}>
             <mesh position={props.position} ref={planet} receiveShadow castShadow>
                 <sphereGeometry args={props.dimensions} attach="geometry" />
                 <meshPhysicalMaterial map={base} />
                 <BallCollider
+                    name={`planet_${props.name}`}
+                    // sensor
                     args={props.dimensions}
-                    sensor
-                    collisionGroups={interactionGroups([2], [1])}
-                    onIntersectionEnter={({ rigidBodyObject }) => {
-                        console.log('planet', rigidBodyObject);
+                    onIntersectionEnter={({ colliderObject }) => {
+                        console.log('planet', colliderObject);
                     }}
                 />
             </mesh>

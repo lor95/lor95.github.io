@@ -8,7 +8,7 @@ import { StyleSheet, css } from 'aphrodite';
 
 import { Space } from './components/Space';
 
-const debug = true;
+const debug = false;
 
 const styles = StyleSheet.create({
     app: {

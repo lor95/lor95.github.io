@@ -1,12 +1,14 @@
 import { useKeyboardControls } from '@react-three/drei';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
-import { MeshCollider, RigidBody, interactionGroups } from '@react-three/rapier';
+import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { useCallback, useRef } from 'react';
 import { Euler, Quaternion, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { Lasers, useLaser } from './Lasers';
+
+//http://freesoundeffect.net/sound/small-laser-06-sound-effect
 
 export const Starship = (props) => {
     const starshipBody = useRef();
@@ -63,22 +65,22 @@ export const Starship = (props) => {
 
         const { forward, backward, left, right, fire } = getKeys();
         if (forward) {
-            linvel.x += Math.abs(Math.cos(angle)) * dirVec.x * delta * 80;
-            linvel.z += Math.abs(Math.sin(angle)) * dirVec.z * delta * 80;
+            linvel.x += Math.abs(Math.cos(angle)) * dirVec.x * delta * 120;
+            linvel.z += Math.abs(Math.sin(angle)) * dirVec.z * delta * 120;
         }
         if (backward) {
-            linvel.x -= Math.abs(Math.cos(angle)) * dirVec.x * delta * 30;
-            linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * delta * 30;
+            linvel.x -= Math.abs(Math.cos(angle)) * dirVec.x * delta * 45;
+            linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * delta * 45;
         }
         if (left) {
-            angvel += delta * 20;
+            angvel += delta * 45;
         }
         if (right) {
-            angvel -= delta * 20;
+            angvel -= delta * 45;
         }
         if (fire && canFire) {
             fireLaser({
-                position: [currentPosition.x, currentPosition.y + 3.8, currentPosition.z],
+                position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
                 rotation: new Euler().setFromQuaternion(currentRotation, 'XYZ'),
                 direction: {
                     x: Math.abs(Math.cos(angle)) * dirVec.x,
@@ -106,25 +108,25 @@ export const Starship = (props) => {
 
     return (
         <>
-            <RigidBody name="starship" friction={0.1} ref={starshipBody}>
-                <MeshCollider
-                    type="hull"
-                    collisionGroups={interactionGroups([0], [])}
-                    onIntersectionEnter={({ rigidBodyObject }) => {
-                        console.log('starship', rigidBodyObject);
+            <RigidBody friction={0.1} ref={starshipBody}>
+                <primitive
+                    position={[0, 9, 0]}
+                    object={starship}
+                    scale={0.6}
+                    rotation={[0, -Math.PI / 2, 0]}
+                    castShadow
+                    receiveShadow
+                />
+                <CuboidCollider
+                    name="starship"
+                    args={[2, 0.5, 1.5]}
+                    position={[-1, 9, 0]}
+                    onIntersectionEnter={({ colliderObject }) => {
+                        colliderObject.name !== 'starship_laser' && console.log('starship', colliderObject);
                     }}
-                >
-                    <primitive
-                        position={[0, 4, 0]}
-                        object={starship}
-                        scale={0.6}
-                        rotation={[0, -Math.PI / 2, 0]}
-                        castShadow
-                        receiveShadow
-                    />
-                </MeshCollider>
+                />
             </RigidBody>
-            <Lasers />
+            <Lasers name="starship_laser" explosionCallback={props.explosionCallback} laserSounds={props.laserSounds} />
         </>
     );
 };

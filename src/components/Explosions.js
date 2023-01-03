@@ -1,8 +1,19 @@
 import { useFrame } from '@react-three/fiber';
 import { useRef, useState } from 'react';
 import { MathUtils } from 'three';
+import create from 'zustand';
 
-export const Explosion = ({ position, count }) => {
+export const useExplosion = create((set) => ({
+    explosion: [],
+    addExplosion: (props) => set((state) => ({ explosion: [...state.explosion, props] })),
+}));
+
+export const Explosions = () => {
+    const explosion = useExplosion((state) => state.explosion);
+    return explosion.map((props, index) => <Explosion key={index} position={props.position} count={props.count} />);
+};
+
+const Explosion = ({ position, count }) => {
     const points = useRef();
     const [visible, setVisible] = useState(true);
 
@@ -26,7 +37,7 @@ export const Explosion = ({ position, count }) => {
     let particlesPosition = generateParticles();
 
     const intervalId = setInterval(() => {
-        if (visible) {
+        if (visible && points) {
             let pointsArr = Array.from(points.current.geometry.attributes.position.array);
             const currentIndex = Math.random() * pointsArr.length;
             pointsArr.splice(Math.floor(currentIndex, 1), 5);
@@ -44,7 +55,7 @@ export const Explosion = ({ position, count }) => {
     }, 20);
 
     useFrame((state) => {
-        if (visible) {
+        if (visible && points) {
             const { clock } = state;
 
             for (let i = 0; i < particlesPosition.length / 3; i++) {

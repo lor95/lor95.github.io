@@ -1,8 +1,10 @@
 import { useTexture } from '@react-three/drei';
-import { RigidBody } from '@react-three/rapier';
-import { Suspense } from 'react';
+import { CuboidCollider, RigidBody } from '@react-three/rapier';
+import { Suspense, useCallback } from 'react';
 import { generateUUID } from 'three/src/math/MathUtils';
 
+import { laserDefaultSound } from '../Audio';
+import { Explosions, useExplosion } from './Explosions';
 import { Planet } from './Planet';
 import { Starship } from './Starship';
 
@@ -23,10 +25,21 @@ export const Space = (props) => {
     const dimensions = getWindowDimensions();
     dimensions.width > dimensions.height ? (textureFile = 'images/space-w.jpg') : (textureFile = 'images/space-h.jpg');
     const texture = useTexture(textureFile);
+    const spaceDimensions = [1000, 1000, 9];
+
+    const addExplosion = useExplosion((state) => state.addExplosion);
+    const createExplosion = useCallback(
+        (props) => {
+            addExplosion(props);
+        },
+        [addExplosion]
+    );
+
     return (
         <Suspense fallback={null}>
             <primitive attach="background" object={texture} />
-            <Starship debug={props.debug} />
+            <Explosions />
+            <Starship debug={props.debug} explosionCallback={createExplosion} laserSounds={[laserDefaultSound]} />
             {Object.keys(planets).map((planetName) => (
                 <Planet
                     key={generateUUID()}
@@ -35,10 +48,11 @@ export const Space = (props) => {
                     dimensions={planets[planetName].dimensions}
                 />
             ))}
-            <RigidBody friction={0} type="fixed" colliders="cuboid" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>
+            <RigidBody friction={0} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>
                 <mesh receiveShadow castShadow>
-                    <boxGeometry args={[1000, 1000, 9]} />
+                    <boxGeometry args={spaceDimensions} />
                     <meshStandardMaterial color="gray" transparent opacity={props.debug ? 0.5 : 0} />
+                    <CuboidCollider args={spaceDimensions} />
                 </mesh>
             </RigidBody>
         </Suspense>

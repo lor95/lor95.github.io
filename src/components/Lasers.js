@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber';
-import { CuboidCollider, interactionGroups } from '@react-three/rapier';
+import { CuboidCollider } from '@react-three/rapier';
 import { useRef, useState } from 'react';
 import create from 'zustand';
 
@@ -8,14 +8,23 @@ export const useLaser = create((set) => ({
     addLaser: (props) => set((state) => ({ laser: [...state.laser, props] })),
 }));
 
-export const Lasers = () => {
+export const Lasers = ({ name, laserSounds, explosionCallback }) => {
     const laser = useLaser((state) => state.laser);
+    console.log('ciao1');
     return laser.map((props, index) => (
-        <Laser key={index} position={props.position} rotation={props.rotation} direction={props.direction} />
+        <Laser
+            key={index}
+            name={name}
+            position={props.position}
+            rotation={props.rotation}
+            direction={props.direction}
+            explosionCallback={explosionCallback}
+            laserSounds={laserSounds}
+        />
     ));
 };
 
-const Laser = ({ position, rotation, direction }) => {
+const Laser = ({ name, position, rotation, direction, explosionCallback, laserSounds }) => {
     const laser = useRef();
     const collider = useRef();
     const [visible, setVisible] = useState(true);
@@ -23,6 +32,12 @@ const Laser = ({ position, rotation, direction }) => {
     setTimeout(() => {
         setVisible(false);
     }, 1000);
+
+    if (visible) {
+        const index = Math.floor(Math.random() * laserSounds.length);
+        laserSounds[index].isPlaying && laserSounds[index].stop();
+        laserSounds[index].play();
+    }
 
     useFrame(() => {
         if (collider && laser && visible) {
@@ -43,13 +58,23 @@ const Laser = ({ position, rotation, direction }) => {
                 <cylinderGeometry args={[0.1, 0.1, 2.5, 8]} attach="geometry" />
                 <meshPhysicalMaterial color="#ff0000" />
                 <CuboidCollider
-                    args={[0.1, 0.1, 0.1, 0.1]}
                     sensor
-                    onIntersectionEnter={({ rigidBodyObject }) => {
-                        rigidBodyObject.name.startsWith('planet') && setVisible(false);
+                    name={name}
+                    args={[0.1, 0.1, 0.1, 0.1]}
+                    onIntersectionEnter={({ colliderObject }) => {
+                        if (colliderObject.name.startsWith('planet')) {
+                            // explosionCallback({
+                            //     position: [
+                            //         laser.current.position.x,
+                            //         laser.current.position.y,
+                            //         laser.current.position.z,
+                            //     ],
+                            //     count: 300,
+                            // });
+                            setVisible(false);
+                        }
                     }}
                     ref={collider}
-                    collisionGroups={interactionGroups([1], [2])}
                 />
             </mesh>
         )
