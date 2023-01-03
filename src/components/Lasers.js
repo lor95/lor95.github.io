@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber';
 import { CuboidCollider } from '@react-three/rapier';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import create from 'zustand';
 
 export const useLaser = create((set) => ({
@@ -33,11 +33,11 @@ const Laser = ({ name, position, rotation, direction, explosionCallback, laserSo
         setVisible(false);
     }, 1000);
 
-    if (visible) {
+    useEffect(() => {
         const index = Math.floor(Math.random() * laserSounds.length);
         laserSounds[index].isPlaying && laserSounds[index].stop();
         laserSounds[index].play();
-    }
+    }, [laserSounds]);
 
     useFrame(() => {
         if (collider && laser && visible) {
