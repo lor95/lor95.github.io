@@ -30,7 +30,7 @@ const Laser = ({ name, position, rotation, direction, explosionCallback, laserSo
 
     setTimeout(() => {
         setVisible(false);
-    }, 1000);
+    }, 2000);
 
     useEffect(() => {
         const index = Math.floor(Math.random() * laserSounds.length);
@@ -40,8 +40,8 @@ const Laser = ({ name, position, rotation, direction, explosionCallback, laserSo
 
     useFrame(() => {
         if (collider && laser && visible) {
-            laser.current.position.x += direction.x * 0.5;
-            laser.current.position.z += direction.z * 0.5;
+            laser.current.position.x += direction.x * 0.45;
+            laser.current.position.z += direction.z * 0.45;
             collider.current[0].setTranslation({
                 x: laser.current.position.x,
                 y: laser.current.position.y,
@@ -55,13 +55,13 @@ const Laser = ({ name, position, rotation, direction, explosionCallback, laserSo
         visible && (
             <mesh position={position} rotation={rotation} rotation-z={-Math.PI / 2} ref={laser}>
                 <cylinderGeometry args={[0.1, 0.1, 2.5, 8]} attach="geometry" />
-                <meshPhysicalMaterial color="#ff0000" />
+                <meshStandardMaterial color="#ff0000" />
                 <CuboidCollider
                     sensor
                     name={name}
                     args={[0.1, 0.1, 0.1, 0.1]}
                     onIntersectionEnter={({ colliderObject }) => {
-                        if (colliderObject.name.startsWith('planet')) {
+                        if (colliderObject.name.startsWith('planet') || colliderObject.name === 'alien') {
                             explosionCallback({
                                 position: [
                                     laser.current.position.x,

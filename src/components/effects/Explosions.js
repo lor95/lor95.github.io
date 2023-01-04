@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils } from 'three';
 import create from 'zustand';
 
@@ -8,7 +8,7 @@ export const useExplosion = create((set) => ({
     addExplosion: (props) => set((state) => ({ explosion: [...state.explosion, props] })),
 }));
 
-export const Explosions = () => {
+export const Explosions = ({ explosionSounds }) => {
     const explosion = useExplosion((state) => state.explosion);
     return explosion.map((props, index) => (
         <Explosion
@@ -18,11 +18,12 @@ export const Explosions = () => {
             color={props.color}
             size={props.size}
             fadeOutSpeed={props.fadeOutSpeed}
+            explosionSounds={explosionSounds}
         />
     ));
 };
 
-const Explosion = ({ position, count, color, size, fadeOutSpeed }) => {
+const Explosion = ({ position, count, color, size, fadeOutSpeed, explosionSounds }) => {
     const points = useRef();
     const visiblePoints = useRef();
     const [visible, setVisible] = useState(true);
@@ -44,11 +45,17 @@ const Explosion = ({ position, count, color, size, fadeOutSpeed }) => {
         return positions;
     }, [count]);
 
+    useEffect(() => {
+        const index = Math.floor(Math.random() * explosionSounds.length);
+        explosionSounds[index].isPlaying && explosionSounds[index].stop();
+        explosionSounds[index].play();
+    }, [explosionSounds]);
+
     useFrame(({ clock }) => {
         if (visible) {
             visiblePoints.current.opacity -= fadeOutSpeed;
 
-            if (visiblePoints.current.opacity === 0) {
+            if (visiblePoints.current.opacity <= 0) {
                 setVisible(false);
             }
 

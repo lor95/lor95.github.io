@@ -6,7 +6,7 @@ import { Euler, Quaternion, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
-import { Lasers, useLaser } from './Lasers';
+import { Lasers, useLaser } from './effects/Lasers';
 
 //http://freesoundeffect.net/sound/small-laser-06-sound-effect
 
@@ -90,7 +90,7 @@ export const Starship = (props) => {
             canFire = false;
             setTimeout(() => {
                 canFire = true;
-            }, 250);
+            }, 220);
         }
         Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 20 &&
             starshipBody.current?.applyImpulse({

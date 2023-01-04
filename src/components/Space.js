@@ -3,10 +3,11 @@ import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { Suspense, useCallback } from 'react';
 import { generateUUID } from 'three/src/math/MathUtils';
 
-import { laserDefaultSound } from '../Audio';
-import { Explosions, useExplosion } from './Explosions';
+import { explosionDefaultSound, laserDefaultSound } from '../Audio';
+import { Alien } from './Alien';
 import { Planet } from './Planet';
 import { Starship } from './Starship';
+import { Explosions, useExplosion } from './effects/Explosions';
 
 const getWindowDimensions = () => {
     const { innerWidth: width, innerHeight: height } = window;
@@ -38,7 +39,8 @@ export const Space = (props) => {
     return (
         <Suspense fallback={null}>
             <primitive attach="background" object={texture} />
-            <Explosions />
+            <Explosions explosionSounds={[explosionDefaultSound]} />
+            <Alien />
             <Starship debug={props.debug} explosionCallback={createExplosion} laserSounds={[laserDefaultSound]} />
             {Object.keys(planets).map((planetName) => (
                 <Planet
