@@ -19,42 +19,44 @@ export const Planet = (props) => {
     });
 
     let atmosphereDimensions = [...props.dimensions];
-    atmosphereDimensions[0] = atmosphereDimensions[0] + 6;
+    atmosphereDimensions[0] = atmosphereDimensions[0] + 4;
 
     return (
-        <RigidBody position={props.position} mass={0}>
-            <mesh position={props.position} ref={planet} receiveShadow castShadow>
-                <sphereGeometry args={props.dimensions} attach="geometry" />
-                <meshPhysicalMaterial map={base} />
+        <>
+            <RigidBody position={props.position} mass={0}>
+                <mesh position={props.position} ref={planet} receiveShadow castShadow>
+                    <sphereGeometry args={props.dimensions} attach="geometry" />
+                    <meshPhysicalMaterial map={base} />
+                    <BallCollider
+                        name={`planet_${props.name}`}
+                        // sensor
+                        args={props.dimensions}
+                        onIntersectionEnter={({ colliderObject }) => {
+                            console.log('planet', colliderObject);
+                        }}
+                    />
+                    <BallCollider
+                        name={`atmosphere_${props.name}`}
+                        sensor
+                        args={atmosphereDimensions}
+                        onIntersectionEnter={({ colliderObject }) => {
+                            if (colliderObject.name === 'starship') {
+                                setSelected(planet);
+                            }
+                        }}
+                        onIntersectionExit={({ colliderObject }) => {
+                            if (colliderObject.name === 'starship') {
+                                setSelected(null);
+                            }
+                        }}
+                    />
+                </mesh>
+            </RigidBody>
+            {selected && (
                 <EffectComposer autoClear={false}>
                     <Outline selection={selected} visibleEdgeColor="#ffffff" edgeStrength={100} />
                 </EffectComposer>
-                <BallCollider
-                    name={`planet_${props.name}`}
-                    // sensor
-                    args={props.dimensions}
-                    onIntersectionEnter={({ colliderObject }) => {
-                        console.log('planet', colliderObject);
-                    }}
-                />
-                <BallCollider
-                    name={`atmosphere_${props.name}`}
-                    sensor
-                    args={atmosphereDimensions}
-                    onIntersectionEnter={({ colliderObject }) => {
-                        console.log(colliderObject.name);
-                        if (colliderObject.name === 'starship') {
-                            setSelected(planet);
-                        }
-                    }}
-                    onIntersectionExit={({ colliderObject }) => {
-                        console.log(colliderObject.name);
-                        if (colliderObject.name === 'starship') {
-                            setSelected(null);
-                        }
-                    }}
-                />
-            </mesh>
-        </RigidBody>
+            )}
+        </>
     );
 };
