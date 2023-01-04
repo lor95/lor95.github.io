@@ -10,7 +10,6 @@ export const useLaser = create((set) => ({
 
 export const Lasers = ({ name, laserSounds, explosionCallback }) => {
     const laser = useLaser((state) => state.laser);
-    console.log('ciao1');
     return laser.map((props, index) => (
         <Laser
             key={index}
@@ -41,8 +40,8 @@ const Laser = ({ name, position, rotation, direction, explosionCallback, laserSo
 
     useFrame(() => {
         if (collider && laser && visible) {
-            laser.current.position.x += direction.x * 1.1;
-            laser.current.position.z += direction.z * 1.1;
+            laser.current.position.x += direction.x * 0.5;
+            laser.current.position.z += direction.z * 0.5;
             collider.current[0].setTranslation({
                 x: laser.current.position.x,
                 y: laser.current.position.y,
@@ -63,14 +62,28 @@ const Laser = ({ name, position, rotation, direction, explosionCallback, laserSo
                     args={[0.1, 0.1, 0.1, 0.1]}
                     onIntersectionEnter={({ colliderObject }) => {
                         if (colliderObject.name.startsWith('planet')) {
-                            // explosionCallback({
-                            //     position: [
-                            //         laser.current.position.x,
-                            //         laser.current.position.y,
-                            //         laser.current.position.z,
-                            //     ],
-                            //     count: 300,
-                            // });
+                            explosionCallback({
+                                position: [
+                                    laser.current.position.x,
+                                    laser.current.position.y,
+                                    laser.current.position.z,
+                                ],
+                                color: [
+                                    '#E7DAD8',
+                                    '#ECE6E5',
+                                    '#FAE9E6',
+                                    '#FFBAAE',
+                                    '#FEC79E',
+                                    '#FFE277',
+                                    '#FDEFBB',
+                                    '#FFBAA9',
+                                    '#D8D8D8',
+                                    '#ECECEC',
+                                ][Math.floor(Math.random() * 10)],
+                                count: 30,
+                                size: 0.5,
+                                fadeOutSpeed: 0.025,
+                            });
                             setVisible(false);
                         }
                     }}
