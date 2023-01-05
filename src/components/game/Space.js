@@ -67,17 +67,6 @@ export const Space = (props) => {
         <Suspense fallback={null}>
             {/* Background */}
             <primitive attach="background" object={texture} />
-            {/* Lights */}
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, -10, -20]} intensity={0.4} />
-            <pointLight position={[0, 10, 5]} intensity={0.4} />
-            <spotLight intensity={0.7} position={[0, 1000, 0]} />
-            {/* Game Logic */}
-            <Explosions explosionSounds={[explosionDefaultSound]} />
-            <Lasers explosionCallback={createExplosion} laserSounds={[laserDefaultSound]} />
-            {planetComponents}
-            {alien}
-            {starship}
             <RigidBody friction={0} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>
                 <mesh receiveShadow castShadow>
                     <boxGeometry args={spaceDimensions} />
@@ -85,6 +74,17 @@ export const Space = (props) => {
                     <CuboidCollider args={spaceDimensions} />
                 </mesh>
             </RigidBody>
+            {/* Lights */}
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, -10, -20]} intensity={0.4} />
+            <pointLight position={[0, 10, 5]} intensity={0.4} />
+            <spotLight intensity={0.7} position={[0, 1000, 0]} />
+            {/* Game Logic */}
+            {alien}
+            {starship}
+            {planetComponents}
+            <Explosions explosionSounds={[explosionDefaultSound]} />
+            <Lasers explosionCallback={createExplosion} laserSounds={[laserDefaultSound]} />
         </Suspense>
     );
 };
