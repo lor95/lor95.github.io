@@ -1,13 +1,14 @@
 import { useTexture } from '@react-three/drei';
-import { CuboidCollider, Physics, RigidBody } from '@react-three/rapier';
-import { Suspense, useCallback } from 'react';
+import { CuboidCollider, RigidBody } from '@react-three/rapier';
+import { Suspense, useCallback, useMemo } from 'react';
 import { generateUUID } from 'three/src/math/MathUtils';
 
 import { explosionDefaultSound, laserDefaultSound } from '../../Audio';
-import { Alien } from './Alien';
-import { Planet } from './Planet';
-import { Starship } from './Starship';
 import { Explosions, useExplosion } from './effects/Explosions';
+import { Lasers, useLaser } from './effects/Lasers';
+import { Alien } from './entities/Alien';
+import { Planet } from './entities/Planet';
+import { Starship } from './entities/Starship';
 
 const getWindowDimensions = () => {
     const { innerWidth: width, innerHeight: height } = window;
@@ -36,35 +37,54 @@ export const Space = (props) => {
         [addExplosion]
     );
 
+    const addLaser = useLaser((state) => state.addLaser);
+    const fireLaser = useCallback(
+        (props) => {
+            addLaser(props);
+        },
+        [addLaser]
+    );
+    const alien = useMemo(() => <Alien laserCallback={fireLaser} />, [fireLaser]);
+    const starship = useMemo(
+        () => <Starship debug={props.debug} laserCallback={fireLaser} />,
+        [fireLaser, props.debug]
+    );
+
+    const planetComponents = useMemo(
+        () =>
+            Object.keys(planets).map((planetName) => (
+                <Planet
+                    key={generateUUID()}
+                    name={planetName}
+                    position={planets[planetName].position}
+                    dimensions={planets[planetName].dimensions}
+                />
+            )),
+        []
+    );
+
     return (
-        <Physics colliders={false} gravity={[0, -40, 0]}>
-            <Suspense fallback={null}>
-                {/* Lights */}
-                <ambientLight intensity={0.5} />
-                <pointLight position={[10, -10, -20]} intensity={0.4} />
-                <pointLight position={[0, 10, 5]} intensity={0.4} />
-                <spotLight intensity={0.7} position={[0, 1000, 0]} />
-                {/* Game Logic */}
-                <primitive attach="background" object={texture} />
-                <Explosions explosionSounds={[explosionDefaultSound]} />
-                <Alien />
-                <Starship debug={props.debug} explosionCallback={createExplosion} laserSounds={[laserDefaultSound]} />
-                {Object.keys(planets).map((planetName) => (
-                    <Planet
-                        key={generateUUID()}
-                        name={planetName}
-                        position={planets[planetName].position}
-                        dimensions={planets[planetName].dimensions}
-                    />
-                ))}
-                <RigidBody friction={0} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>
-                    <mesh receiveShadow castShadow>
-                        <boxGeometry args={spaceDimensions} />
-                        <meshStandardMaterial color="gray" transparent opacity={props.debug ? 0.5 : 0} />
-                        <CuboidCollider args={spaceDimensions} />
-                    </mesh>
-                </RigidBody>
-            </Suspense>
-        </Physics>
+        <Suspense fallback={null}>
+            {/* Background */}
+            <primitive attach="background" object={texture} />
+            {/* Lights */}
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, -10, -20]} intensity={0.4} />
+            <pointLight position={[0, 10, 5]} intensity={0.4} />
+            <spotLight intensity={0.7} position={[0, 1000, 0]} />
+            {/* Game Logic */}
+            <Explosions explosionSounds={[explosionDefaultSound]} />
+            <Lasers explosionCallback={createExplosion} laserSounds={[laserDefaultSound]} />
+            {planetComponents}
+            {alien}
+            {starship}
+            <RigidBody friction={0} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>
+                <mesh receiveShadow castShadow>
+                    <boxGeometry args={spaceDimensions} />
+                    <meshStandardMaterial color="gray" transparent opacity={props.debug ? 0.5 : 0} />
+                    <CuboidCollider args={spaceDimensions} />
+                </mesh>
+            </RigidBody>
+        </Suspense>
     );
 };

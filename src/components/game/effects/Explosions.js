@@ -3,6 +3,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils } from 'three';
 import create from 'zustand';
 
+import { useAudio } from '../../../Audio';
+
 export const useExplosion = create((set) => ({
     explosion: [],
     addExplosion: (props) => set((state) => ({ explosion: [...state.explosion, props] })),
@@ -45,11 +47,15 @@ const Explosion = ({ position, count, color, size, fadeOutSpeed, explosionSounds
         return positions;
     }, [count]);
 
+    const audio = useAudio((state) => state.audio);
+
     useEffect(() => {
-        const index = Math.floor(Math.random() * explosionSounds.length);
-        explosionSounds[index].isPlaying && explosionSounds[index].stop();
-        explosionSounds[index].play();
-    }, [explosionSounds]);
+        if (audio) {
+            const index = Math.floor(Math.random() * explosionSounds.length);
+            explosionSounds[index].isPlaying && explosionSounds[index].stop();
+            explosionSounds[index].play();
+        }
+    }, [explosionSounds, audio]);
 
     useFrame(({ clock }) => {
         if (visible) {

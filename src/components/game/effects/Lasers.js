@@ -3,17 +3,20 @@ import { CuboidCollider } from '@react-three/rapier';
 import { useEffect, useRef, useState } from 'react';
 import create from 'zustand';
 
+import { useAudio } from '../../../Audio';
+
 export const useLaser = create((set) => ({
     laser: [],
     addLaser: (props) => set((state) => ({ laser: [...state.laser, props] })),
 }));
 
-export const Lasers = ({ name, laserSounds, explosionCallback }) => {
+export const Lasers = ({ laserSounds, explosionCallback }) => {
     const laser = useLaser((state) => state.laser);
     return laser.map((props, index) => (
         <Laser
             key={index}
-            name={name}
+            name={props.name}
+            color={props.color}
             position={props.position}
             rotation={props.rotation}
             direction={props.direction}
@@ -23,20 +26,26 @@ export const Lasers = ({ name, laserSounds, explosionCallback }) => {
     ));
 };
 
-const Laser = ({ name, position, rotation, direction, explosionCallback, laserSounds }) => {
+const Laser = ({ name, color, position, rotation, direction, explosionCallback, laserSounds }) => {
     const laser = useRef();
     const collider = useRef();
     const [visible, setVisible] = useState(true);
 
-    setTimeout(() => {
-        setVisible(false);
-    }, 2000);
+    useEffect(() => {
+        setTimeout(() => {
+            setVisible(false);
+        }, 2000);
+    }, []);
+
+    const audio = useAudio((state) => state.audio);
 
     useEffect(() => {
-        const index = Math.floor(Math.random() * laserSounds.length);
-        laserSounds[index].isPlaying && laserSounds[index].stop();
-        laserSounds[index].play();
-    }, [laserSounds]);
+        if (audio) {
+            const index = Math.floor(Math.random() * laserSounds.length);
+            laserSounds[index].isPlaying && laserSounds[index].stop();
+            laserSounds[index].play();
+        }
+    }, [laserSounds, audio]);
 
     useFrame(() => {
         if (collider && laser && visible) {
@@ -55,13 +64,17 @@ const Laser = ({ name, position, rotation, direction, explosionCallback, laserSo
         visible && (
             <mesh position={position} rotation={rotation} rotation-z={-Math.PI / 2} ref={laser}>
                 <cylinderGeometry args={[0.1, 0.1, 2.5, 8]} attach="geometry" />
-                <meshStandardMaterial color="#ff0000" />
+                <meshStandardMaterial color={color} />
                 <CuboidCollider
                     sensor
                     name={name}
                     args={[0.1, 0.1, 0.1, 0.1]}
                     onIntersectionEnter={({ colliderObject }) => {
-                        if (colliderObject.name.startsWith('planet') || colliderObject.name === 'alien') {
+                        if (
+                            colliderObject.name.startsWith('planet') ||
+                            (colliderObject.name === 'alien' && name !== 'alien_laser') ||
+                            (colliderObject.name === 'starship' && name !== 'starship_laser')
+                        ) {
                             explosionCallback({
                                 position: [
                                     laser.current.position.x,

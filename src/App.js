@@ -1,12 +1,6 @@
-// import * as THREE from 'three';
-import { KeyboardControls } from '@react-three/drei';
-import { OrbitControls, Stats } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
-import { Debug } from '@react-three/rapier';
-// import { DDSLoader } from 'three-stdlib';
 import { StyleSheet, css } from 'aphrodite';
 
-import { Space } from './components/game/Space';
+import { GameMain } from './components/game/GameMain';
 
 const debug = false;
 
@@ -22,22 +16,7 @@ const styles = StyleSheet.create({
 function App() {
     return (
         <div className={css(styles.app)}>
-            <KeyboardControls
-                map={[
-                    { name: 'forward', keys: ['ArrowUp'] },
-                    { name: 'backward', keys: ['ArrowDown'] },
-                    { name: 'left', keys: ['ArrowLeft'] },
-                    { name: 'right', keys: ['ArrowRight'] },
-                    { name: 'fire', keys: ['Space'] },
-                ]}
-            >
-                <Canvas linear flat resize={{ scroll: false }}>
-                    <Space debug={debug} />
-                    {debug && <Debug />}
-                    {debug && <Stats />}
-                    {debug && <OrbitControls />}
-                </Canvas>
-            </KeyboardControls>
+            <GameMain debug={debug} />
         </div>
     );
 }

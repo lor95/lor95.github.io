@@ -1,7 +1,13 @@
-import { Audio, AudioListener, AudioLoader } from 'three';
+import { AudioListener, AudioLoader, PositionalAudio } from 'three';
+import create from 'zustand';
 
-export const laserDefaultSound = new Audio(new AudioListener());
-export const explosionDefaultSound = new Audio(new AudioListener());
+export const useAudio = create((set) => ({
+    audio: false,
+    toggleAudio: () => set((state) => ({ audio: !state.audio })),
+}));
+
+export const laserDefaultSound = new PositionalAudio(new AudioListener());
+export const explosionDefaultSound = new PositionalAudio(new AudioListener());
 new AudioLoader().load('sounds/laser_1.mp3', (buffer) => {
     laserDefaultSound.setBuffer(buffer);
 });
