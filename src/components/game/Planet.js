@@ -7,7 +7,7 @@ import { RepeatWrapping, TextureLoader } from 'three';
 export const Planet = (props) => {
     // https://codesandbox.io/s/textured-sphere-jsy9s?from-embed
     const planet = useRef();
-    const [selected, setSelected] = useState(null);
+    const [highlighted, setHighlighted] = useState(false);
     const base = useLoader(TextureLoader, 'images/water-texture.jpg');
     base.wrapS = RepeatWrapping;
     base.wrapT = RepeatWrapping;
@@ -19,7 +19,7 @@ export const Planet = (props) => {
     });
 
     let atmosphereDimensions = [...props.dimensions];
-    atmosphereDimensions[0] = atmosphereDimensions[0] + 4;
+    atmosphereDimensions[0] = atmosphereDimensions[0] + 5;
 
     return (
         <>
@@ -41,22 +41,20 @@ export const Planet = (props) => {
                         args={atmosphereDimensions}
                         onIntersectionEnter={({ colliderObject }) => {
                             if (colliderObject.name === 'starship') {
-                                setSelected(planet);
+                                setHighlighted(true);
                             }
                         }}
                         onIntersectionExit={({ colliderObject }) => {
                             if (colliderObject.name === 'starship') {
-                                setSelected(null);
+                                setHighlighted(false);
                             }
                         }}
                     />
                 </mesh>
             </RigidBody>
-            {selected && (
-                <EffectComposer autoClear={false}>
-                    <Outline selection={selected} visibleEdgeColor="#ffffff" edgeStrength={100} />
-                </EffectComposer>
-            )}
+            <EffectComposer enabled={highlighted} autoClear={false} multisampling={0} stencilBuffer={false}>
+                <Outline xRay={false} selection={planet} visibleEdgeColor="#ffffff" edgeStrength={140} blur={true} />
+            </EffectComposer>
         </>
     );
 };

@@ -1,12 +1,12 @@
 // import * as THREE from 'three';
 import { KeyboardControls } from '@react-three/drei';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, Stats } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { Debug, Physics } from '@react-three/rapier';
+import { Debug } from '@react-three/rapier';
 // import { DDSLoader } from 'three-stdlib';
 import { StyleSheet, css } from 'aphrodite';
 
-import { Space } from './components/Space';
+import { Space } from './components/game/Space';
 
 const debug = false;
 
@@ -18,17 +18,6 @@ const styles = StyleSheet.create({
 });
 
 // THREE.DefaultLoadingManager.addHandler(/\.dds$/i, new DDSLoader());
-
-const Lights = () => {
-    return (
-        <>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, -10, -20]} intensity={0.4} />
-            <pointLight position={[0, 10, 5]} intensity={0.4} />
-            <spotLight intensity={0.7} position={[0, 1000, 0]} />
-        </>
-    );
-};
 
 function App() {
     return (
@@ -43,12 +32,10 @@ function App() {
                 ]}
             >
                 <Canvas linear flat resize={{ scroll: false }}>
-                    <Physics colliders={false} gravity={[0, -40, 0]}>
-                        <Space debug={debug} />
-                        <Lights />
-                        {debug && <Debug />}
-                        {debug && <OrbitControls />}
-                    </Physics>
+                    <Space debug={debug} />
+                    {debug && <Debug />}
+                    {debug && <Stats />}
+                    {debug && <OrbitControls />}
                 </Canvas>
             </KeyboardControls>
         </div>
