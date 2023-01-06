@@ -1,6 +1,6 @@
 import { useTexture } from '@react-three/drei';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
-import { Suspense, useCallback, useMemo } from 'react';
+import { Suspense, useCallback, useMemo, useRef } from 'react';
 import { generateUUID } from 'three/src/math/MathUtils';
 
 import { explosionDefaultSound, laserDefaultSound } from '../../Audio';
@@ -19,11 +19,13 @@ const getWindowDimensions = () => {
 };
 
 const planets = {
-    neptune: { position: [23, 5, 14], dimensions: [10, 60, 40] },
+    neptune: { position: [23, 5, 14], dimensions: [10, 60, 40], baseTexture: 'water-texture.jpg' },
 };
 
 export const Space = (props) => {
     let textureFile;
+    const starshipBody = useRef();
+
     const dimensions = getWindowDimensions();
     dimensions.width > dimensions.height ? (textureFile = 'images/space-w.jpg') : (textureFile = 'images/space-h.jpg');
     const texture = useTexture(textureFile);
@@ -44,9 +46,11 @@ export const Space = (props) => {
         },
         [addLaser]
     );
-    const alien = useMemo(() => <Alien laserCallback={fireLaser} />, [fireLaser]);
-    const starship = useMemo(
-        () => <Starship debug={props.debug} laserCallback={fireLaser} />,
+
+    const alienComponent = useMemo(() => <Alien starshipBody={starshipBody} laserCallback={fireLaser} />, [fireLaser]);
+
+    const starshipComponent = useMemo(
+        () => <Starship starshipBody={starshipBody} debug={props.debug} laserCallback={fireLaser} />,
         [fireLaser, props.debug]
     );
 
@@ -58,6 +62,7 @@ export const Space = (props) => {
                     name={planetName}
                     position={planets[planetName].position}
                     dimensions={planets[planetName].dimensions}
+                    baseTexture={planets[planetName].baseTexture}
                 />
             )),
         []
@@ -80,8 +85,8 @@ export const Space = (props) => {
             <pointLight position={[0, 10, 5]} intensity={0.4} />
             <spotLight intensity={0.7} position={[0, 1000, 0]} />
             {/* Game Logic */}
-            {alien}
-            {starship}
+            {alienComponent}
+            {starshipComponent}
             {planetComponents}
             <Explosions explosionSounds={[explosionDefaultSound]} />
             <Lasers explosionCallback={createExplosion} laserSounds={[laserDefaultSound]} />

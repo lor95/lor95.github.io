@@ -1,16 +1,12 @@
 import { useFrame, useLoader } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { useRef } from 'react';
-import { Euler, Quaternion, Vector3 } from 'three';
+import { Euler, Quaternion, Vector2, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
-//http://freesoundeffect.net/sound/small-laser-06-sound-effect
-
 export const Alien = (props) => {
     const alienBody = useRef();
-    //const defaultVector = new Vector3();
-    // let canFire = true;
 
     const mainQuaternion = new Quaternion();
     mainQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), 0);
@@ -49,9 +45,16 @@ export const Alien = (props) => {
                 },
             });
         }
-    }, 500);
+    }, 700);
 
-    useFrame(() => {});
+    useFrame(() => {
+        const diffAngle = new Vector2(
+            props.starshipBody.current.translation().x - alienBody.current.translation().x,
+            props.starshipBody.current.translation().z - alienBody.current.translation().z
+        ).angle();
+        alien.rotation.y = -Math.PI - diffAngle;
+        alienBody.current.setRotation(alien.quaternion);
+    });
 
     return (
         <RigidBody friction={0.1} ref={alienBody} position={[1, 1, 10]}>

@@ -8,7 +8,8 @@ export const Planet = (props) => {
     // https://codesandbox.io/s/textured-sphere-jsy9s?from-embed
     const planet = useRef();
     const [highlighted, setHighlighted] = useState(false);
-    const base = useLoader(TextureLoader, 'images/water-texture.jpg');
+
+    const base = useLoader(TextureLoader, `images/${props.baseTexture}`);
     base.wrapS = RepeatWrapping;
     base.wrapT = RepeatWrapping;
     base.repeat.set(4, 2);

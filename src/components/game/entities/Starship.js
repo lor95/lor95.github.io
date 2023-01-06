@@ -1,15 +1,18 @@
 import { useKeyboardControls } from '@react-three/drei';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { Euler, Quaternion, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
-//http://freesoundeffect.net/sound/small-laser-06-sound-effect
-
 export const Starship = (props) => {
-    const starshipBody = useRef();
+    const materials = useLoader(MTLLoader, 'models/starship.mtl');
+    const starship = useLoader(OBJLoader, 'models/starship.obj', (loader) => {
+        materials.preload();
+        loader.setMaterials(materials);
+    });
+
     const defaultVector = new Vector3();
     let canFire = true;
 
@@ -19,11 +22,6 @@ export const Starship = (props) => {
     refQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
 
     const [, getKeys] = useKeyboardControls();
-    const materials = useLoader(MTLLoader, 'models/starship.mtl');
-    const starship = useLoader(OBJLoader, 'models/starship.obj', (loader) => {
-        materials.preload();
-        loader.setMaterials(materials);
-    });
 
     const { camera } = useThree();
 
@@ -36,10 +34,10 @@ export const Starship = (props) => {
     useFrame(({ camera }, delta) => {
         let angvel = 0;
         let linvel = { x: 0, z: 0 };
-        const currentLinvel = starshipBody.current.linvel();
-        const currentAngvel = starshipBody.current.angvel();
-        const currentRotation = starshipBody.current.rotation();
-        const currentPosition = starshipBody.current.translation();
+        const currentLinvel = props.starshipBody.current.linvel();
+        const currentAngvel = props.starshipBody.current.angvel();
+        const currentRotation = props.starshipBody.current.rotation();
+        const currentPosition = props.starshipBody.current.translation();
         if (!props.debug) {
             defaultVector.set(currentPosition.x, 50, currentPosition.z + 25);
             camera.position.lerp(defaultVector, delta * 2);
@@ -87,13 +85,13 @@ export const Starship = (props) => {
             }, 220);
         }
         Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 20 &&
-            starshipBody.current?.applyImpulse({
+            props.starshipBody.current?.applyImpulse({
                 x: linvel.x,
                 y: 0,
                 z: linvel.z,
             });
         Math.abs(currentAngvel.y) < 4 &&
-            starshipBody.current?.applyTorqueImpulse({
+            props.starshipBody.current?.applyTorqueImpulse({
                 x: 0,
                 y: angvel,
                 z: 0,
@@ -101,7 +99,7 @@ export const Starship = (props) => {
     });
 
     return (
-        <RigidBody friction={0.1} ref={starshipBody}>
+        <RigidBody friction={0.1} ref={props.starshipBody}>
             <primitive
                 position={[0, 9, 0]}
                 object={starship}
