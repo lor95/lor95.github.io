@@ -76,9 +76,18 @@ export const Space = (props) => {
         []
     );
 
+    const spawnAlienLoop = () => {
+        const time = Math.floor(Math.random() * (25000 - 5000) + 5000);
+        setTimeout(() => {
+            spawnAlien();
+            spawnAlienLoop();
+        }, time);
+    };
+
     useEffect(() => {
-        spawnAlien();
-    }, [spawnAlien]);
+        spawnAlienLoop();
+        // eslint-disable-next-line
+    }, []);
 
     return (
         <Suspense fallback={null}>

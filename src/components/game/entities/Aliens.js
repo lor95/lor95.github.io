@@ -26,9 +26,18 @@ export const useAlien = create((set) => ({
 
 export const Aliens = ({ starshipBody, explosionCallback, laserCallback }) => {
     const alien = useAlien((state) => state.alien);
+
+    const materials = useLoader(MTLLoader, 'models/ufo.mtl');
+    const alienObj = useLoader(OBJLoader, 'models/ufo.obj', (loader) => {
+        materials.preload();
+        loader.setMaterials(materials);
+    });
+    useBVH(alienObj);
+
     return alien.map((props, index) => (
         <Alien
             key={index}
+            alien={alienObj.clone()}
             uuid={props.uuid}
             laserCallback={laserCallback}
             explosionCallback={explosionCallback}
@@ -38,14 +47,8 @@ export const Aliens = ({ starshipBody, explosionCallback, laserCallback }) => {
     ));
 };
 
-const Alien = ({ uuid, health, starshipBody, explosionCallback, laserCallback }) => {
+const Alien = ({ alien, uuid, health, starshipBody, explosionCallback, laserCallback }) => {
     const alienBody = useRef();
-    const materials = useLoader(MTLLoader, 'models/ufo.mtl');
-    const alien = useLoader(OBJLoader, 'models/ufo.obj', (loader) => {
-        materials.preload();
-        loader.setMaterials(materials);
-    });
-    useBVH(alien);
 
     const mainQuaternion = new Quaternion();
     mainQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), 0);
@@ -91,7 +94,7 @@ const Alien = ({ uuid, health, starshipBody, explosionCallback, laserCallback })
             }
         }, alienFireRate);
         /* eslint-disable-next-line */
-    }, [alien, laserCallback]);
+    }, [laserCallback]);
 
     useFrame(() => {
         if (health > 0) {

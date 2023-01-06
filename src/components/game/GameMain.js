@@ -35,7 +35,6 @@ export const GameMain = (props) => {
                     flat
                     resize={{ scroll: false }}
                     className={css(styles.gameMain)}
-                    mode="concurrent"
                     dpr={dpr}
                 >
                     <PerformanceMonitor onIncline={() => setDpr(1)} onDecline={() => setDpr(0.6)} />

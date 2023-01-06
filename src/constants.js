@@ -11,5 +11,5 @@ export const explosionColorsArr = [
     '#D8D8D8',
     '#ECECEC',
 ];
-export const starshipFireRate = 220; // ms
-export const alienFireRate = 650; // ms
+export const starshipFireRate = 250; // ms
+export const alienFireRate = 1000; // ms
