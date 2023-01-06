@@ -1,3 +1,4 @@
+import { useBVH } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils } from 'three';
@@ -29,6 +30,7 @@ export const Explosions = ({ explosionSounds }) => {
 const Explosion = ({ position, count, color, size, spreadSpeed, fadeOutSpeed, explosionSounds }) => {
     const points = useRef();
     const visiblePoints = useRef();
+    useBVH(points);
     const [visible, setVisible] = useState(true);
 
     let particlesPosition = useMemo(() => {

@@ -1,4 +1,4 @@
-import { useKeyboardControls } from '@react-three/drei';
+import { useBVH, useKeyboardControls } from '@react-three/drei';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { useMemo } from 'react';
@@ -15,6 +15,7 @@ export const Starship = (props) => {
         materials.preload();
         loader.setMaterials(materials);
     });
+    useBVH(starship);
 
     const defaultVector = new Vector3();
     let canFire = true;
@@ -42,10 +43,9 @@ export const Starship = (props) => {
         const currentAngvel = props.starshipBody.current.angvel();
         const currentRotation = props.starshipBody.current.rotation();
         const currentPosition = props.starshipBody.current.translation();
-        if (!props.debug) {
-            defaultVector.set(currentPosition.x, 50, currentPosition.z + 25);
-            camera.position.lerp(defaultVector, delta * 2);
-        }
+
+        defaultVector.set(currentPosition.x, 50, currentPosition.z + 25);
+        camera.position.lerp(defaultVector, delta * 2);
 
         const dirVec = {
             x: currentRotation.angleTo(mainQuaternion) >= Math.PI / 2 ? 1 : -1,
@@ -73,6 +73,19 @@ export const Starship = (props) => {
         if (keyboardKeys.right || joystickKeys.right) {
             angvel -= 0.65;
         }
+        Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 20 &&
+            props.starshipBody.current?.applyImpulse({
+                x: linvel.x,
+                y: 0,
+                z: linvel.z,
+            });
+        Math.abs(currentAngvel.y) < 4 &&
+            props.starshipBody.current?.applyTorqueImpulse({
+                x: 0,
+                y: angvel,
+                z: 0,
+            });
+
         if ((keyboardKeys.fire || joystickKeys.fire) && canFire) {
             props.laserCallback({
                 color: '#ff0000',
@@ -89,18 +102,6 @@ export const Starship = (props) => {
                 canFire = true;
             }, starshipFireRate);
         }
-        Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 20 &&
-            props.starshipBody.current?.applyImpulse({
-                x: linvel.x,
-                y: 0,
-                z: linvel.z,
-            });
-        Math.abs(currentAngvel.y) < 4 &&
-            props.starshipBody.current?.applyTorqueImpulse({
-                x: 0,
-                y: angvel,
-                z: 0,
-            });
     });
 
     return (

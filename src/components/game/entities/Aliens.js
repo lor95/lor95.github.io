@@ -1,3 +1,4 @@
+import { useBVH } from '@react-three/drei';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { useCallback, useMemo, useRef } from 'react';
@@ -39,17 +40,17 @@ export const Aliens = ({ starshipBody, explosionCallback, laserCallback }) => {
 
 const Alien = ({ uuid, health, starshipBody, explosionCallback, laserCallback }) => {
     const alienBody = useRef();
-
-    const mainQuaternion = new Quaternion();
-    mainQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), 0);
-    const refQuaternion = new Quaternion();
-    refQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
-
     const materials = useLoader(MTLLoader, 'models/ufo.mtl');
     const alien = useLoader(OBJLoader, 'models/ufo.obj', (loader) => {
         materials.preload();
         loader.setMaterials(materials);
     });
+    useBVH(alien);
+
+    const mainQuaternion = new Quaternion();
+    mainQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), 0);
+    const refQuaternion = new Quaternion();
+    refQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
 
     const hitAlienCallback = useAlien((state) => state.hitAlien);
     const hitAlien = useCallback(() => {

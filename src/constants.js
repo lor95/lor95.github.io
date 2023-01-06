@@ -1,4 +1,4 @@
-export const desktopOperatingSystem = window.navigator.userAgent.indexOf('Mobile') !== -1;
+export const mobileOperatingSystem = window.navigator.userAgent.indexOf('Mobile') !== -1;
 export const explosionColorsArr = [
     '#E7DAD8',
     '#ECE6E5',

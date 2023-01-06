@@ -2,7 +2,7 @@ import { StyleSheet, css } from 'aphrodite';
 
 import { GameMain } from './components/game/GameMain';
 
-const debug = false;
+const debug = true;
 
 const styles = StyleSheet.create({
     app: {

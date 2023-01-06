@@ -1,4 +1,4 @@
-import { useTexture } from '@react-three/drei';
+import { BakeShadows, Preload, useTexture } from '@react-three/drei';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
 import { generateUUID } from 'three/src/math/MathUtils';
@@ -58,8 +58,8 @@ export const Space = (props) => {
     );
 
     const starshipComponent = useMemo(
-        () => <Starship starshipBody={starshipBody} debug={props.debug} laserCallback={fireLaser} />,
-        [fireLaser, props.debug]
+        () => <Starship starshipBody={starshipBody} laserCallback={fireLaser} />,
+        [fireLaser]
     );
 
     const planetComponents = useMemo(
@@ -82,6 +82,8 @@ export const Space = (props) => {
 
     return (
         <Suspense fallback={null}>
+            <Preload all />
+            <BakeShadows />
             {/* Background */}
             <primitive attach="background" object={texture} />
             <RigidBody friction={0} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>
@@ -93,8 +95,6 @@ export const Space = (props) => {
             </RigidBody>
             {/* Lights */}
             <ambientLight intensity={0.5} />
-            <pointLight position={[10, -10, -20]} intensity={0.4} />
-            <pointLight position={[0, 10, 5]} intensity={0.4} />
             <spotLight intensity={0.7} position={[0, 1000, 0]} />
             {/* Game Logic */}
             {alienComponent}

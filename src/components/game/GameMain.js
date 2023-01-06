@@ -1,10 +1,10 @@
-import { KeyboardControls } from '@react-three/drei';
-import { Stats } from '@react-three/drei';
+import { AdaptiveDpr, AdaptiveEvents, KeyboardControls, PerformanceMonitor, Stats } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Debug, Physics } from '@react-three/rapier';
 import { StyleSheet, css } from 'aphrodite';
+import { useState } from 'react';
 
-import { desktopOperatingSystem } from '../../constants';
+import { mobileOperatingSystem } from '../../constants';
 import { Space } from './Space';
 import { ButtonContainer } from './gameControls/ButtonContainer';
 import { JoystickController } from './gameControls/JoystickController';
@@ -16,10 +16,11 @@ const styles = StyleSheet.create({
 });
 
 export const GameMain = (props) => {
+    const [dpr, setDpr] = useState(0.8);
     return (
         <>
             <ButtonContainer />
-            {(desktopOperatingSystem || props.debug) && <JoystickController />}
+            {(mobileOperatingSystem || props.debug) && <JoystickController />}
             <KeyboardControls
                 map={[
                     { name: 'forward', keys: ['ArrowUp'] },
@@ -29,7 +30,17 @@ export const GameMain = (props) => {
                     { name: 'fire', keys: ['Space'] },
                 ]}
             >
-                <Canvas linear flat resize={{ scroll: false }} className={css(styles.gameMain)}>
+                <Canvas
+                    linear
+                    flat
+                    resize={{ scroll: false }}
+                    className={css(styles.gameMain)}
+                    mode="concurrent"
+                    dpr={dpr}
+                >
+                    <PerformanceMonitor onIncline={() => setDpr(1)} onDecline={() => setDpr(0.6)} />
+                    <AdaptiveDpr pixelated />
+                    <AdaptiveEvents />
                     <Physics colliders={false} gravity={[0, -40, 0]}>
                         <Space debug={props.debug} />
                         {props.debug && <Debug />}

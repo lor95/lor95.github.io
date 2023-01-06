@@ -1,3 +1,4 @@
+import { useBVH } from '@react-three/drei';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { EffectComposer, Outline } from '@react-three/postprocessing';
 import { BallCollider, RigidBody } from '@react-three/rapier';
@@ -7,6 +8,7 @@ import { RepeatWrapping, TextureLoader } from 'three';
 export const Planet = (props) => {
     // https://codesandbox.io/s/textured-sphere-jsy9s?from-embed
     const planet = useRef();
+    useBVH(planet);
     const [highlighted, setHighlighted] = useState(false);
 
     const base = useLoader(TextureLoader, `images/${props.baseTexture}`);

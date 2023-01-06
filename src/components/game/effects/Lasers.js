@@ -1,3 +1,4 @@
+import { useBVH } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { CuboidCollider } from '@react-three/rapier';
 import { useEffect, useRef, useState } from 'react';
@@ -30,6 +31,7 @@ export const Lasers = ({ laserSounds, explosionCallback }) => {
 const Laser = ({ name, color, position, rotation, direction, explosionCallback, laserSounds }) => {
     const laser = useRef();
     const collider = useRef();
+    useBVH(laser);
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {
@@ -48,10 +50,10 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
         }
     }, [laserSounds, audio]);
 
-    useFrame(() => {
+    useFrame((_, delta) => {
         if (collider && laser && visible) {
-            laser.current.position.x += direction.x * 0.4;
-            laser.current.position.z += direction.z * 0.4;
+            laser.current.position.x += direction.x * 45 * delta;
+            laser.current.position.z += direction.z * 45 * delta;
             collider.current[0].setTranslation({
                 x: laser.current.position.x,
                 y: laser.current.position.y,
