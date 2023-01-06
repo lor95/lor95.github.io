@@ -4,6 +4,8 @@ import { FaFireAlt } from 'react-icons/fa';
 import ReactNipple from 'react-nipple';
 import create from 'zustand';
 
+import { starshipFireRate } from '../../../constants';
+
 const styles = StyleSheet.create({
     fireContainer: {
         position: 'absolute',
@@ -38,6 +40,8 @@ export const useJoystickControls = create((set) => ({
 }));
 
 export const JoystickController = () => {
+    let canClick = true;
+
     const updateControllerCallback = useJoystickControls((state) => state.updateController);
     const updateController = useCallback(
         (props) => {
@@ -73,7 +77,13 @@ export const JoystickController = () => {
                 <div
                     className={css(styles.fire)}
                     onPointerDown={() => {
-                        handleFire(true);
+                        if (canClick) {
+                            handleFire(true);
+                            canClick = false;
+                            setTimeout(() => {
+                                canClick = true;
+                            }, starshipFireRate);
+                        }
                     }}
                     onPointerUp={() => {
                         handleFire(false);

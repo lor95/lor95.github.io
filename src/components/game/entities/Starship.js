@@ -6,6 +6,7 @@ import { Euler, Quaternion, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
+import { starshipFireRate } from '../../../constants';
 import { useJoystickControls } from '../gameControls/JoystickController';
 
 export const Starship = (props) => {
@@ -86,7 +87,7 @@ export const Starship = (props) => {
             canFire = false;
             setTimeout(() => {
                 canFire = true;
-            }, 220);
+            }, starshipFireRate);
         }
         Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 20 &&
             props.starshipBody.current?.applyImpulse({

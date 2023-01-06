@@ -6,7 +6,7 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import create from 'zustand';
 
-import { explosionColorsArr } from '../../../constants';
+import { alienFireRate, explosionColorsArr } from '../../../constants';
 
 export const useAlien = create((set) => ({
     alien: [],
@@ -88,7 +88,7 @@ const Alien = ({ uuid, health, starshipBody, explosionCallback, laserCallback })
                     },
                 });
             }
-        }, 650);
+        }, alienFireRate);
         /* eslint-disable-next-line */
     }, [alien, laserCallback]);
 

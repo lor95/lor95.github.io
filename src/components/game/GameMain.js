@@ -1,9 +1,10 @@
 import { KeyboardControls } from '@react-three/drei';
-import { OrbitControls, Stats } from '@react-three/drei';
+import { Stats } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Debug, Physics } from '@react-three/rapier';
 import { StyleSheet, css } from 'aphrodite';
 
+import { desktopOperatingSystem } from '../../constants';
 import { Space } from './Space';
 import { ButtonContainer } from './gameControls/ButtonContainer';
 import { JoystickController } from './gameControls/JoystickController';
@@ -18,7 +19,7 @@ export const GameMain = (props) => {
     return (
         <>
             <ButtonContainer />
-            <JoystickController />
+            {(desktopOperatingSystem || props.debug) && <JoystickController />}
             <KeyboardControls
                 map={[
                     { name: 'forward', keys: ['ArrowUp'] },
@@ -33,7 +34,6 @@ export const GameMain = (props) => {
                         <Space debug={props.debug} />
                         {props.debug && <Debug />}
                         {props.debug && <Stats />}
-                        {props.debug && <OrbitControls />}
                     </Physics>
                 </Canvas>
             </KeyboardControls>

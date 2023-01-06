@@ -1,3 +1,4 @@
+export const desktopOperatingSystem = window.navigator.userAgent.indexOf('Mobile') !== -1;
 export const explosionColorsArr = [
     '#E7DAD8',
     '#ECE6E5',
@@ -10,3 +11,5 @@ export const explosionColorsArr = [
     '#D8D8D8',
     '#ECECEC',
 ];
+export const starshipFireRate = 220; // ms
+export const alienFireRate = 650; // ms
