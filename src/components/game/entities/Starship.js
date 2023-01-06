@@ -6,6 +6,8 @@ import { Euler, Quaternion, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
+import { useJoystickControls } from '../gameControls/JoystickController';
+
 export const Starship = (props) => {
     const materials = useLoader(MTLLoader, 'models/starship.mtl');
     const starship = useLoader(OBJLoader, 'models/starship.obj', (loader) => {
@@ -22,6 +24,7 @@ export const Starship = (props) => {
     refQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
 
     const [, getKeys] = useKeyboardControls();
+    const joystickKeys = useJoystickControls((state) => state.controller);
 
     const { camera } = useThree();
 
@@ -53,22 +56,23 @@ export const Starship = (props) => {
                 ? currentRotation.angleTo(mainQuaternion)
                 : Math.PI + Math.abs(Math.PI - currentRotation.angleTo(mainQuaternion));
 
-        const { forward, backward, left, right, fire } = getKeys();
-        if (forward) {
+        const keyboardKeys = getKeys();
+
+        if (keyboardKeys.forward || joystickKeys.forward) {
             linvel.x += Math.abs(Math.cos(angle)) * dirVec.x * delta * 130;
             linvel.z += Math.abs(Math.sin(angle)) * dirVec.z * delta * 130;
         }
-        if (backward) {
+        if (keyboardKeys.backward || joystickKeys.backward) {
             linvel.x -= Math.abs(Math.cos(angle)) * dirVec.x * delta * 65;
             linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * delta * 65;
         }
-        if (left) {
+        if (keyboardKeys.left || joystickKeys.left) {
             angvel += 0.65;
         }
-        if (right) {
+        if (keyboardKeys.right || joystickKeys.right) {
             angvel -= 0.65;
         }
-        if (fire && canFire) {
+        if ((keyboardKeys.fire || joystickKeys.fire) && canFire) {
             props.laserCallback({
                 color: '#ff0000',
                 name: 'starship_laser',

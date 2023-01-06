@@ -6,6 +6,7 @@ import { StyleSheet, css } from 'aphrodite';
 
 import { Space } from './Space';
 import { ButtonContainer } from './gameControls/ButtonContainer';
+import { JoystickController } from './gameControls/JoystickController';
 
 const styles = StyleSheet.create({
     gameMain: {
@@ -17,6 +18,7 @@ export const GameMain = (props) => {
     return (
         <>
             <ButtonContainer />
+            <JoystickController />
             <KeyboardControls
                 map={[
                     { name: 'forward', keys: ['ArrowUp'] },
