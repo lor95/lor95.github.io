@@ -45,7 +45,7 @@ export const Alien = (props) => {
                 },
             });
         }
-    }, 700);
+    }, 600);
 
     useFrame(() => {
         const diffAngle = new Vector2(
@@ -54,10 +54,23 @@ export const Alien = (props) => {
         ).angle();
         alien.rotation.y = -Math.PI - diffAngle;
         alienBody.current.setRotation(alien.quaternion);
+
+        const currentRotation = alienBody.current.rotation();
+
+        const dirVec = {
+            x: currentRotation.angleTo(mainQuaternion) >= Math.PI / 2 ? 1 : -1,
+            z: currentRotation.angleTo(refQuaternion) <= Math.PI / 2 ? 1 : -1,
+        };
+
+        alienBody.current.setLinvel({
+            x: Math.abs(Math.cos(diffAngle)) * dirVec.x * 5,
+            y: 0,
+            z: Math.abs(Math.sin(diffAngle)) * dirVec.z * 5,
+        });
     });
 
     return (
-        <RigidBody friction={0.1} ref={alienBody} position={[1, 1, 10]}>
+        <RigidBody friction={0.1} ref={alienBody} position={[40, 1, 40]}>
             <primitive
                 position={[0, 6.5, 0]}
                 object={alien}

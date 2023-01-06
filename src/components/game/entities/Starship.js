@@ -55,18 +55,18 @@ export const Starship = (props) => {
 
         const { forward, backward, left, right, fire } = getKeys();
         if (forward) {
-            linvel.x += Math.abs(Math.cos(angle)) * dirVec.x * delta * 120;
-            linvel.z += Math.abs(Math.sin(angle)) * dirVec.z * delta * 120;
+            linvel.x += Math.abs(Math.cos(angle)) * dirVec.x * delta * 130;
+            linvel.z += Math.abs(Math.sin(angle)) * dirVec.z * delta * 130;
         }
         if (backward) {
-            linvel.x -= Math.abs(Math.cos(angle)) * dirVec.x * delta * 45;
-            linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * delta * 45;
+            linvel.x -= Math.abs(Math.cos(angle)) * dirVec.x * delta * 65;
+            linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * delta * 65;
         }
         if (left) {
-            angvel += delta * 45;
+            angvel += 0.8;
         }
         if (right) {
-            angvel -= delta * 45;
+            angvel -= 0.8;
         }
         if (fire && canFire) {
             props.laserCallback({
