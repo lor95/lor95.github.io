@@ -11,8 +11,6 @@ const styles = StyleSheet.create({
     },
 });
 
-// THREE.DefaultLoadingManager.addHandler(/\.dds$/i, new DDSLoader());
-
 function App() {
     return (
         <div className={css(styles.app)}>

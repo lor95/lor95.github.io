@@ -1,12 +1,12 @@
 import { useTexture } from '@react-three/drei';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
-import { Suspense, useCallback, useMemo, useRef } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
 import { generateUUID } from 'three/src/math/MathUtils';
 
 import { explosionDefaultSound, laserDefaultSound } from '../../Audio';
 import { Explosions, useExplosion } from './effects/Explosions';
 import { Lasers, useLaser } from './effects/Lasers';
-import { Alien } from './entities/Alien';
+import { Aliens, useAlien } from './entities/Aliens';
 import { Planet } from './entities/Planet';
 import { Starship } from './entities/Starship';
 
@@ -47,7 +47,15 @@ export const Space = (props) => {
         [addLaser]
     );
 
-    const alienComponent = useMemo(() => <Alien starshipBody={starshipBody} laserCallback={fireLaser} />, [fireLaser]);
+    const addAlien = useAlien((state) => state.addAlien);
+    const spawnAlien = useCallback(() => {
+        addAlien({ health: 3, uuid: generateUUID() });
+    }, [addAlien]);
+
+    const alienComponent = useMemo(
+        () => <Aliens starshipBody={starshipBody} laserCallback={fireLaser} explosionCallback={createExplosion} />,
+        [fireLaser, createExplosion]
+    );
 
     const starshipComponent = useMemo(
         () => <Starship starshipBody={starshipBody} debug={props.debug} laserCallback={fireLaser} />,
@@ -67,6 +75,10 @@ export const Space = (props) => {
             )),
         []
     );
+
+    useEffect(() => {
+        spawnAlien();
+    }, [spawnAlien]);
 
     return (
         <Suspense fallback={null}>

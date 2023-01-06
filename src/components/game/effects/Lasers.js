@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import create from 'zustand';
 
 import { useAudio } from '../../../Audio';
+import { explosionColorsArr } from '../../../constants';
 
 export const useLaser = create((set) => ({
     laser: [],
@@ -49,8 +50,8 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
 
     useFrame(() => {
         if (collider && laser && visible) {
-            laser.current.position.x += direction.x * 0.45;
-            laser.current.position.z += direction.z * 0.45;
+            laser.current.position.x += direction.x * 0.4;
+            laser.current.position.z += direction.z * 0.4;
             collider.current[0].setTranslation({
                 x: laser.current.position.x,
                 y: laser.current.position.y,
@@ -81,21 +82,11 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
                                     laser.current.position.y,
                                     laser.current.position.z,
                                 ],
-                                color: [
-                                    '#E7DAD8',
-                                    '#ECE6E5',
-                                    '#FAE9E6',
-                                    '#FFBAAE',
-                                    '#FEC79E',
-                                    '#FFE277',
-                                    '#FDEFBB',
-                                    '#FFBAA9',
-                                    '#D8D8D8',
-                                    '#ECECEC',
-                                ][Math.floor(Math.random() * 10)],
+                                color: explosionColorsArr[Math.floor(Math.random() * 10)],
                                 count: 30,
                                 size: 0.5,
                                 fadeOutSpeed: 0.025,
+                                spreadSpeed: 0.1,
                             });
                             setVisible(false);
                         }

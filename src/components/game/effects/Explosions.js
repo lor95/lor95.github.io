@@ -19,13 +19,14 @@ export const Explosions = ({ explosionSounds }) => {
             count={props.count}
             color={props.color}
             size={props.size}
+            spreadSpeed={props.spreadSpeed}
             fadeOutSpeed={props.fadeOutSpeed}
             explosionSounds={explosionSounds}
         />
     ));
 };
 
-const Explosion = ({ position, count, color, size, fadeOutSpeed, explosionSounds }) => {
+const Explosion = ({ position, count, color, size, spreadSpeed, fadeOutSpeed, explosionSounds }) => {
     const points = useRef();
     const visiblePoints = useRef();
     const [visible, setVisible] = useState(true);
@@ -69,11 +70,11 @@ const Explosion = ({ position, count, color, size, fadeOutSpeed, explosionSounds
                 const i3 = i * 3;
 
                 points.current.geometry.attributes.position.array[i3] +=
-                    Math.sin(clock.elapsedTime + Math.random() * 50) * 0.1;
+                    Math.sin(clock.elapsedTime + Math.random() * 50) * spreadSpeed;
                 points.current.geometry.attributes.position.array[i3 + 1] +=
-                    Math.cos(clock.elapsedTime + Math.random() * 50) * 0.1;
+                    Math.cos(clock.elapsedTime + Math.random() * 50) * spreadSpeed;
                 points.current.geometry.attributes.position.array[i3 + 2] +=
-                    Math.sin(clock.elapsedTime + Math.random() * 50) * 0.1;
+                    Math.sin(clock.elapsedTime + Math.random() * 50) * spreadSpeed;
             }
 
             points.current.geometry.attributes.position.needsUpdate = true;

@@ -63,10 +63,10 @@ export const Starship = (props) => {
             linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * delta * 65;
         }
         if (left) {
-            angvel += 0.8;
+            angvel += 0.65;
         }
         if (right) {
-            angvel -= 0.8;
+            angvel -= 0.65;
         }
         if (fire && canFire) {
             props.laserCallback({
