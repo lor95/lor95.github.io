@@ -61,11 +61,25 @@ export const JoystickController = () => {
         } catch {}
     };
 
+    const handleFire = (fire) => {
+        let controls = { ...defaultController };
+        controls['fire'] = fire;
+        updateController(controls);
+    };
+
     return (
         <>
             <div className={css(styles.fireContainer)}>
-                <div className={css(styles.fire)} onClick={() => alert('ciao')}>
-                    <FaFireAlt />
+                <div
+                    className={css(styles.fire)}
+                    onPointerDown={() => {
+                        handleFire(true);
+                    }}
+                    onPointerUp={() => {
+                        handleFire(false);
+                    }}
+                >
+                    <FaFireAlt style={{ outline: 'none' }} />
                 </div>
             </div>
             <ReactNipple
