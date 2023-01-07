@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils } from 'three';
 import create from 'zustand';
 
-import { useAudio } from '../../../Audio';
+import { getChoice } from '../helpers/getRandomValues';
+import { useAudio } from './Audio';
 
 export const useExplosion = create((set) => ({
     explosion: [],
@@ -54,9 +55,9 @@ const Explosion = ({ position, count, color, size, spreadSpeed, fadeOutSpeed, ex
 
     useEffect(() => {
         if (audio) {
-            const index = Math.floor(Math.random() * explosionSounds.length);
-            explosionSounds[index].isPlaying && explosionSounds[index].stop();
-            explosionSounds[index].play();
+            const explosionSound = getChoice(explosionSounds);
+            explosionSound.isPlaying && explosionSound.stop();
+            explosionSound.play();
         }
     }, [explosionSounds, audio]);
 

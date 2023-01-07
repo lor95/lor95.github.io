@@ -119,7 +119,7 @@ export const Starship = (props) => {
                 args={[2, 0.5, 1.5]}
                 position={[-1, 9, 0]}
                 onIntersectionEnter={({ colliderObject }) => {
-                    colliderObject.name !== 'starship_laser' && console.log('starship', colliderObject);
+                    colliderObject.name !== 'starship_laser' && void 0;
                 }}
             />
         </RigidBody>

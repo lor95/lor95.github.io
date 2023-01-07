@@ -9,9 +9,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         top: 10,
         right: 10,
-        fontSize: 30,
+        fontSize: 20,
         color: 'white',
         gap: 10,
+        zIndex: 1,
     },
 });
 

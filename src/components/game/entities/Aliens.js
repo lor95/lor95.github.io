@@ -8,6 +8,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import create from 'zustand';
 
 import { alienFireRate, explosionColorsArr } from '../../../constants';
+import { getChoice } from '../helpers/getRandomValues';
 
 export const useAlien = create((set) => ({
     alien: [],
@@ -21,7 +22,7 @@ export const useAlien = create((set) => ({
                 return alien;
             }),
         })),
-    removeAlien: ({ uuid }) => set((state) => ({ alien: [...state.alien].filter((alien) => alien.uuid !== uuid) })),
+    // removeAlien: ({ uuid }) => set((state) => ({ alien: [...state.alien].filter((alien) => alien.uuid !== uuid) })),
 }));
 
 export const Aliens = ({ starshipBody, explosionCallback, laserCallback }) => {
@@ -43,11 +44,12 @@ export const Aliens = ({ starshipBody, explosionCallback, laserCallback }) => {
             explosionCallback={explosionCallback}
             starshipBody={starshipBody}
             health={props.health}
+            coords={props.coords}
         />
     ));
 };
 
-const Alien = ({ alien, uuid, health, starshipBody, explosionCallback, laserCallback }) => {
+const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, laserCallback }) => {
     const alienBody = useRef();
 
     const mainQuaternion = new Quaternion();
@@ -60,12 +62,13 @@ const Alien = ({ alien, uuid, health, starshipBody, explosionCallback, laserCall
         hitAlienCallback({ uuid });
     }, [hitAlienCallback, uuid]);
 
-    const removeAlienCallback = useAlien((state) => state.removeAlien);
-    const removeAlien = useCallback(() => {
-        removeAlienCallback({ uuid });
-    }, [removeAlienCallback, uuid]);
+    // const removeAlienCallback = useAlien((state) => state.removeAlien);
+    // const removeAlien = useCallback(() => {
+    //     removeAlienCallback({ uuid });
+    // }, [removeAlienCallback, uuid]);
 
     useMemo(() => {
+        console.log('alien spawned at', coords);
         setInterval(() => {
             if (health > 0 && alienBody.current && alien) {
                 const currentPosition = alienBody.current.translation();
@@ -113,16 +116,16 @@ const Alien = ({ alien, uuid, health, starshipBody, explosionCallback, laserCall
             };
 
             alienBody.current.setLinvel({
-                x: Math.abs(Math.cos(diffAngle)) * dirVec.x * 5,
+                x: Math.abs(Math.cos(diffAngle)) * dirVec.x * 6.5,
                 y: 0,
-                z: Math.abs(Math.sin(diffAngle)) * dirVec.z * 5,
+                z: Math.abs(Math.sin(diffAngle)) * dirVec.z * 6.5,
             });
         }
     });
 
     return (
         health > 0 && (
-            <RigidBody friction={0.1} ref={alienBody} position={[20, 1, 30]}>
+            <RigidBody friction={0.1} ref={alienBody} position={[coords.x, 1, coords.z]}>
                 <primitive
                     position={[0, 6.5, 0]}
                     object={alien}
@@ -142,13 +145,13 @@ const Alien = ({ alien, uuid, health, starshipBody, explosionCallback, laserCall
                                 const currentPosition = alienBody.current.translation();
                                 explosionCallback({
                                     position: [currentPosition.x, currentPosition.y, currentPosition.z],
-                                    color: explosionColorsArr[Math.floor(Math.random() * 10)],
+                                    color: getChoice(explosionColorsArr),
                                     count: 800,
                                     size: 1,
                                     fadeOutSpeed: 0.005,
                                     spreadSpeed: 0.6,
                                 });
-                                removeAlien();
+                                // removeAlien();
                             }
                         }
                     }}

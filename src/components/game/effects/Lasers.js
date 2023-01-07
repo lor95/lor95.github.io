@@ -4,8 +4,9 @@ import { CuboidCollider } from '@react-three/rapier';
 import { useEffect, useRef, useState } from 'react';
 import create from 'zustand';
 
-import { useAudio } from '../../../Audio';
-import { explosionColorsArr } from '../../../constants';
+import { explosionColorsArr, laserDecayTime } from '../../../constants';
+import { getChoice } from '../helpers/getRandomValues';
+import { useAudio } from './Audio';
 
 export const useLaser = create((set) => ({
     laser: [],
@@ -37,23 +38,23 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
     useEffect(() => {
         setTimeout(() => {
             setVisible(false);
-        }, 2000);
+        }, laserDecayTime);
     }, []);
 
     const audio = useAudio((state) => state.audio);
 
     useEffect(() => {
         if (audio) {
-            const index = Math.floor(Math.random() * laserSounds.length);
-            laserSounds[index].isPlaying && laserSounds[index].stop();
-            laserSounds[index].play();
+            const laserSound = getChoice(laserSounds);
+            laserSound.isPlaying && laserSound.stop();
+            laserSound.play();
         }
     }, [laserSounds, audio]);
 
     useFrame((_, delta) => {
         if (collider && laser && visible) {
-            laser.current.position.x += direction.x * 45 * delta;
-            laser.current.position.z += direction.z * 45 * delta;
+            laser.current.position.x += direction.x * 75 * delta;
+            laser.current.position.z += direction.z * 75 * delta;
             collider.current[0].setTranslation({
                 x: laser.current.position.x,
                 y: laser.current.position.y,
@@ -84,7 +85,7 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
                                     laser.current.position.y,
                                     laser.current.position.z,
                                 ],
-                                color: explosionColorsArr[Math.floor(Math.random() * 10)],
+                                color: getChoice(explosionColorsArr),
                                 count: 30,
                                 size: 0.5,
                                 fadeOutSpeed: 0.025,

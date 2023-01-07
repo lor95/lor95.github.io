@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 0.23)',
         outline: 'none',
         borderRadius: 100,
+        zIndex: 1,
     },
     fire: {
         display: 'flex',

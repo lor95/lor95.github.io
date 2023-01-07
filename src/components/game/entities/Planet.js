@@ -27,16 +27,23 @@ export const Planet = (props) => {
     return (
         <>
             <RigidBody position={props.position} mass={0}>
-                <mesh position={props.position} ref={planet} receiveShadow castShadow>
+                <mesh
+                    position={props.position}
+                    ref={planet}
+                    receiveShadow
+                    castShadow
+                    onClick={() => {
+                        highlighted && alert(`visit planet ${props.name}`);
+                    }}
+                >
                     <sphereGeometry args={props.dimensions} attach="geometry" />
                     <meshPhysicalMaterial map={base} />
                     <BallCollider
                         name={`planet_${props.name}`}
-                        // sensor
                         args={props.dimensions}
-                        onIntersectionEnter={({ colliderObject }) => {
-                            console.log('planet', colliderObject);
-                        }}
+                        // onIntersectionEnter={({ colliderObject }) => {
+                        //     console.log('planet', colliderObject);
+                        // }}
                     />
                     <BallCollider
                         name={`atmosphere_${props.name}`}

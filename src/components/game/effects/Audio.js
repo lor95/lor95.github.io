@@ -8,6 +8,7 @@ export const useAudio = create((set) => ({
 
 export const laserDefaultSound = new PositionalAudio(new AudioListener());
 export const explosionDefaultSound = new PositionalAudio(new AudioListener());
+
 new AudioLoader().load('sounds/laser_1.mp3', (buffer) => {
     laserDefaultSound.setBuffer(buffer);
 });

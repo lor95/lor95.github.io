@@ -3,12 +3,14 @@ import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
 import { generateUUID } from 'three/src/math/MathUtils';
 
-import { explosionDefaultSound, laserDefaultSound } from '../../Audio';
+import { alienHealth, planets, spaceDimensions } from '../../constants';
+import { explosionDefaultSound, laserDefaultSound } from './effects/Audio';
 import { Explosions, useExplosion } from './effects/Explosions';
 import { Lasers, useLaser } from './effects/Lasers';
 import { Aliens, useAlien } from './entities/Aliens';
 import { Planet } from './entities/Planet';
 import { Starship } from './entities/Starship';
+import { getAlienSpawnCoords, getRandomInRange } from './helpers/getRandomValues';
 
 const getWindowDimensions = () => {
     const { innerWidth: width, innerHeight: height } = window;
@@ -18,10 +20,6 @@ const getWindowDimensions = () => {
     };
 };
 
-const planets = {
-    neptune: { position: [23, 5, 14], dimensions: [10, 60, 40], baseTexture: 'water-texture.jpg' },
-};
-
 export const Space = (props) => {
     let textureFile;
     const starshipBody = useRef();
@@ -29,7 +27,6 @@ export const Space = (props) => {
     const dimensions = getWindowDimensions();
     dimensions.width > dimensions.height ? (textureFile = 'images/space-w.jpg') : (textureFile = 'images/space-h.jpg');
     const texture = useTexture(textureFile);
-    const spaceDimensions = [1000, 1000, 9];
 
     const addExplosion = useExplosion((state) => state.addExplosion);
     const createExplosion = useCallback(
@@ -49,7 +46,7 @@ export const Space = (props) => {
 
     const addAlien = useAlien((state) => state.addAlien);
     const spawnAlien = useCallback(() => {
-        addAlien({ health: 3, uuid: generateUUID() });
+        addAlien({ uuid: generateUUID(), coords: getAlienSpawnCoords(), health: alienHealth });
     }, [addAlien]);
 
     const alienComponent = useMemo(
@@ -76,16 +73,15 @@ export const Space = (props) => {
         []
     );
 
-    const spawnAlienLoop = () => {
-        const time = Math.floor(Math.random() * (25000 - 5000) + 5000);
+    const spawnAlienLoop = (time) => {
         setTimeout(() => {
             spawnAlien();
-            spawnAlienLoop();
+            spawnAlienLoop(getRandomInRange(12000, 25000));
         }, time);
     };
 
     useEffect(() => {
-        spawnAlienLoop();
+        spawnAlienLoop(getRandomInRange(1000, 3000));
         // eslint-disable-next-line
     }, []);
 
