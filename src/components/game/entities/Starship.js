@@ -74,13 +74,13 @@ export const Starship = (props) => {
             angvel -= 0.65;
         }
         Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 20 &&
-            props.starshipBody.current?.applyImpulse({
+            props.starshipBody.current.applyImpulse({
                 x: linvel.x,
                 y: 0,
                 z: linvel.z,
             });
         Math.abs(currentAngvel.y) < 4 &&
-            props.starshipBody.current?.applyTorqueImpulse({
+            props.starshipBody.current.applyTorqueImpulse({
                 x: 0,
                 y: angvel,
                 z: 0,

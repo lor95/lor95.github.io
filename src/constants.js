@@ -15,8 +15,8 @@ export const laserDecayTime = 2500; // ms
 export const starshipFireRate = 250; // ms
 export const alienHealth = 2;
 export const alienFireRate = 1300; // ms
-export const alienSpawnDistance = 200; // coord
-export const asteroidSpawnDistance = 50; // coord
+export const alienSpawnDistance = 140; // coord
+export const asteroidSpawnDistance = 100; // coord
 export const spaceDimensions = [5000, 5000, 9];
 export const planets = {
     neptune: { position: [23, 5, 14], dimensions: [16, 60, 40], baseTexture: 'water-texture.jpg' },

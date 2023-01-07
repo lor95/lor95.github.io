@@ -6,7 +6,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import create from 'zustand';
 
 import { explosionColorsArr } from '../../../constants';
-import { getChoice, getRandomInRangeFloat, getRandomSign } from '../helpers/getRandomValues';
+import { getChoice, getRandomInRange, getRandomInRangeFloat, getRandomSign } from '../helpers/getRandomValues';
 
 export const useAsteroid = create((set) => ({
     asteroid: [],
@@ -27,27 +27,46 @@ export const Asteroids = ({ explosionCallback }) => {
     const materials2 = useLoader(MTLLoader, 'models/asteroid2.mtl');
     const asteroids = {
         asteroid1: {
-            scaleRange: [0.005, 0.0065],
+            scale: {
+                xs: 0.0016,
+                sm: 0.0025,
+                md: 0.0035,
+                lg: 0.0046,
+                xl: 0.0058,
+            },
             y: 8.5,
             mesh: useLoader(OBJLoader, 'models/asteroid1.obj', (loader) => {
                 materials1.preload();
                 loader.setMaterials(materials1);
             }),
+
             collider: {
-                args: [2.7, 0.5, 2.7],
-                position: [-4, 9, 0],
+                xs: { args: [0.8, 0.5, 0.8], position: [-0.8, 9, 0] },
+                sm: { args: [1.4, 0.5, 1.4], position: [-1.5, 9, 0] },
+                md: { args: [1.9, 0.5, 1.9], position: [-2.4, 9, 0] },
+                lg: { args: [2.2, 0.5, 2.2], position: [-3, 9, 0] },
+                xl: { args: [2.9, 0.5, 2.9], position: [-4, 9, 0] },
             },
         },
         asteroid2: {
-            scaleRange: [1.5, 1.9],
+            scale: {
+                xs: 0.6,
+                sm: 0.9,
+                md: 1.1,
+                lg: 1.6,
+                xl: 2.1,
+            },
             y: 9.5,
             mesh: useLoader(OBJLoader, 'models/asteroid2.obj', (loader) => {
                 materials2.preload();
                 loader.setMaterials(materials2);
             }),
             collider: {
-                args: [2.4, 0.5, 2.4],
-                position: [0, 9, 0],
+                xs: { args: [0.8, 0.5, 0.8], position: [0, 9, 0] },
+                sm: { args: [1.4, 0.5, 1.4], position: [0, 9, 0] },
+                md: { args: [1.9, 0.5, 1.9], position: [0, 9, 0] },
+                lg: { args: [2.2, 0.5, 2.2], position: [0, 9, 0] },
+                xl: { args: [2.9, 0.5, 2.9], position: [0, 9, 0] },
             },
         },
     };
@@ -59,16 +78,17 @@ export const Asteroids = ({ explosionCallback }) => {
             uuid={props.uuid}
             coords={props.coords}
             health={props.health}
-            scaleRange={asteroids[props.asteroidKey].scaleRange}
+            dimension={props.dimension}
+            scale={asteroids[props.asteroidKey].scale[props.dimension]}
             y={asteroids[props.asteroidKey].y}
             mesh={asteroids[props.asteroidKey].mesh.clone()}
-            collider={asteroids[props.asteroidKey].collider}
+            collider={asteroids[props.asteroidKey].collider[props.dimension]}
             explosionCallback={explosionCallback}
         />
     ));
 };
 
-const Asteroid = ({ explosionCallback, uuid, ...props }) => {
+const Asteroid = ({ explosionCallback, uuid, dimension, ...props }) => {
     const asteroidBody = useRef();
 
     const hitAsteroidCallback = useAsteroid((state) => state.hitAsteroid);
@@ -82,35 +102,42 @@ const Asteroid = ({ explosionCallback, uuid, ...props }) => {
         []
     );
 
-    const scale = useMemo(
-        () => getRandomInRangeFloat(props.scaleRange[0], props.scaleRange[1]),
-        // eslint-disable-next-line
-        []
-    );
-
     const collisionCallback = (colliderObject) => {
         if (
             colliderObject.name.startsWith('starship') ||
             colliderObject.name.startsWith('alien') ||
             colliderObject.name.startsWith('planet')
         ) {
+            let sizeCoeff = 3;
+            if (dimension === 'md') {
+                sizeCoeff = 2;
+            } else if (dimension === 'lg' || dimension === 'xl') {
+                sizeCoeff = 1;
+            }
             hitAsteroid();
             const currentPosition = asteroidBody.current.translation();
             explosionCallback({
                 position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
                 color: getChoice(explosionColorsArr),
-                count: 820,
-                size: 1.2,
+                count: 300 / sizeCoeff,
+                size: 0.7,
                 fadeOutSpeed: 0.005,
-                spreadSpeed: 0.65,
+                spreadSpeed: 0.3 / sizeCoeff,
             });
         }
     };
 
+    const rotation = useMemo(() => {
+        return {
+            y: getRandomInRange(0, 650) * getRandomSign(),
+            z: getRandomInRangeFloat(0.0004, 0.015) * getRandomSign(),
+        };
+    }, []);
+
     const linvel = useMemo(() => {
         return {
-            x: getRandomInRangeFloat(300, 3000) * getRandomSign(),
-            z: getRandomInRangeFloat(300, 3000) * getRandomSign(),
+            x: getRandomInRangeFloat(100, 1700) * getRandomSign(),
+            z: getRandomInRangeFloat(100, 1700) * getRandomSign(),
         };
     }, []);
 
@@ -121,22 +148,28 @@ const Asteroid = ({ explosionCallback, uuid, ...props }) => {
                 y: 0,
                 z: linvel.z * delta,
             });
+
+            asteroid.rotation.z += rotation.z;
+            const currentAngvel = asteroidBody.current.angvel();
+            if (Math.abs(currentAngvel.y) < 1) {
+                asteroidBody.current.applyTorqueImpulse({ x: 0, y: rotation.y * delta, z: 0 });
+            }
         }
     });
 
     return (
         props.health > 0 && (
-            <RigidBody friction={0.1} ref={asteroidBody} position={[props.coords.x, 1, props.coords.z]}>
+            <RigidBody friction={0} ref={asteroidBody} position={[props.coords.x, 1, props.coords.z]}>
                 <primitive
                     position={[0, props.y, 0]}
                     object={asteroid}
-                    scale={scale}
+                    scale={props.scale}
                     rotation={[0, -Math.PI / 2, 0]}
                     castShadow
                     receiveShadow
                 />
                 <CuboidCollider
-                    name="asteroid"
+                    name={`asteroid_${dimension}`}
                     args={props.collider.args}
                     position={props.collider.position}
                     onIntersectionEnter={({ colliderObject }) => collisionCallback(colliderObject)}

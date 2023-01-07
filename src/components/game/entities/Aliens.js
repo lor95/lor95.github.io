@@ -146,10 +146,10 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
                                 explosionCallback({
                                     position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
                                     color: getChoice(explosionColorsArr),
-                                    count: 800,
-                                    size: 1,
+                                    count: 300,
+                                    size: 0.7,
                                     fadeOutSpeed: 0.005,
-                                    spreadSpeed: 0.6,
+                                    spreadSpeed: 0.4,
                                 });
                                 // removeAlien();
                             }

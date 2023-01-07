@@ -51,6 +51,7 @@ export const Space = (props) => {
             uuid: generateUUID(),
             health: 1,
             asteroidKey: getChoice(['asteroid1', 'asteroid2']),
+            dimension: getChoice(['xs', 'sm', 'md', 'lg', 'xl']),
             coords: getSpawnCoords('asteroid'),
         });
     }, [addAsteroid]);
@@ -89,20 +90,20 @@ export const Space = (props) => {
     const spawnAlienLoop = (time) => {
         setTimeout(() => {
             spawnAlien();
-            spawnAlienLoop(getRandomInRange(20000, 45000));
+            spawnAlienLoop(getRandomInRange(15000, 35000));
         }, time);
     };
 
     const spawnAsteroidLoop = (time) => {
         setTimeout(() => {
             spawnAsteroid();
-            spawnAsteroidLoop(getRandomInRange(2000, 4500));
+            spawnAsteroidLoop(getRandomInRange(800, 1600));
         }, time);
     };
 
     useEffect(() => {
         spawnAsteroidLoop(getRandomInRange(2000, 4500));
-        spawnAlienLoop(getRandomInRange(2000, 5000));
+        spawnAlienLoop(getRandomInRange(500, 1200));
         // eslint-disable-next-line
     }, []);
 
