@@ -8,9 +8,10 @@ import { explosionDefaultSound, laserDefaultSound } from './effects/Audio';
 import { Explosions, useExplosion } from './effects/Explosions';
 import { Lasers, useLaser } from './effects/Lasers';
 import { Aliens, useAlien } from './entities/Aliens';
+import { Asteroids, useAsteroid } from './entities/Asteroids';
 import { Planet } from './entities/Planet';
 import { Starship } from './entities/Starship';
-import { getAlienSpawnCoords, getRandomInRange } from './helpers/getRandomValues';
+import { getChoice, getRandomInRange, getSpawnCoords } from './helpers/getRandomValues';
 
 const getWindowDimensions = () => {
     const { innerWidth: width, innerHeight: height } = window;
@@ -44,20 +45,32 @@ export const Space = (props) => {
         [addLaser]
     );
 
+    const addAsteroid = useAsteroid((state) => state.addAsteroid);
+    const spawnAsteroid = useCallback(() => {
+        addAsteroid({
+            uuid: generateUUID(),
+            health: 1,
+            asteroidKey: getChoice(['asteroid1', 'asteroid2']),
+            coords: getSpawnCoords('asteroid'),
+        });
+    }, [addAsteroid]);
+
     const addAlien = useAlien((state) => state.addAlien);
     const spawnAlien = useCallback(() => {
-        addAlien({ uuid: generateUUID(), coords: getAlienSpawnCoords(), health: alienHealth });
+        addAlien({ uuid: generateUUID(), coords: getSpawnCoords('alien'), health: alienHealth });
     }, [addAlien]);
-
-    const alienComponent = useMemo(
-        () => <Aliens starshipBody={starshipBody} laserCallback={fireLaser} explosionCallback={createExplosion} />,
-        [fireLaser, createExplosion]
-    );
 
     const starshipComponent = useMemo(
         () => <Starship starshipBody={starshipBody} laserCallback={fireLaser} />,
         [fireLaser]
     );
+
+    const alienComponents = useMemo(
+        () => <Aliens starshipBody={starshipBody} laserCallback={fireLaser} explosionCallback={createExplosion} />,
+        [fireLaser, createExplosion]
+    );
+
+    const asteroidComponents = useMemo(() => <Asteroids explosionCallback={createExplosion} />, [createExplosion]);
 
     const planetComponents = useMemo(
         () =>
@@ -76,12 +89,20 @@ export const Space = (props) => {
     const spawnAlienLoop = (time) => {
         setTimeout(() => {
             spawnAlien();
-            spawnAlienLoop(getRandomInRange(12000, 25000));
+            spawnAlienLoop(getRandomInRange(20000, 45000));
+        }, time);
+    };
+
+    const spawnAsteroidLoop = (time) => {
+        setTimeout(() => {
+            spawnAsteroid();
+            spawnAsteroidLoop(getRandomInRange(2000, 4500));
         }, time);
     };
 
     useEffect(() => {
-        spawnAlienLoop(getRandomInRange(1000, 3000));
+        spawnAsteroidLoop(getRandomInRange(2000, 4500));
+        spawnAlienLoop(getRandomInRange(2000, 5000));
         // eslint-disable-next-line
     }, []);
 
@@ -102,7 +123,8 @@ export const Space = (props) => {
             <ambientLight intensity={0.5} />
             <spotLight intensity={0.7} position={[0, 1000, 0]} />
             {/* Game Logic */}
-            {alienComponent}
+            {alienComponents}
+            {asteroidComponents}
             {starshipComponent}
             {planetComponents}
             <Explosions explosionSounds={[explosionDefaultSound]} />

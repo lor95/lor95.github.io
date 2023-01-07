@@ -77,7 +77,8 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
                         if (
                             colliderObject.name.startsWith('planet') ||
                             (colliderObject.name === 'alien' && name !== 'alien_laser') ||
-                            (colliderObject.name === 'starship' && name !== 'starship_laser')
+                            (colliderObject.name === 'starship' && name !== 'starship_laser') ||
+                            colliderObject.name === 'asteroid'
                         ) {
                             explosionCallback({
                                 position: [

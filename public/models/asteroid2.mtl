@@ -1,0 +1,22 @@
+# Blender MTL File: 'Rock1.blend'
+# Material Count: 2
+
+newmtl Material
+Ns 3.725490
+Ka 0.600000 0.600000 0.600000
+Kd 0.880000 0.940000 0.880000
+Ks 0.407937 0.407937 0.407937
+Ni 1.000000
+d 1.000000
+illum 2
+map_Disp asteroid2.jpg
+map_Kd asteroid2.jpg
+
+newmtl Material.001
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 1.500000 1.500000 1.500000
+Ni 1.000000
+d 1.000000
+illum 2

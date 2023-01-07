@@ -144,7 +144,7 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
                             if (health === 1) {
                                 const currentPosition = alienBody.current.translation();
                                 explosionCallback({
-                                    position: [currentPosition.x, currentPosition.y, currentPosition.z],
+                                    position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
                                     color: getChoice(explosionColorsArr),
                                     count: 800,
                                     size: 1,
