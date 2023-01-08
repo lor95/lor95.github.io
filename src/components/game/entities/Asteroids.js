@@ -3,24 +3,11 @@ import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { useCallback, useMemo, useRef } from 'react';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import create from 'zustand';
 
 import { explosionColorsArr } from '../../../constants';
-import { getChoice, getRandomInRange, getRandomInRangeFloat, getRandomSign } from '../helpers/getRandomValues';
-
-export const useAsteroid = create((set) => ({
-    asteroid: [],
-    addAsteroid: (props) => set((state) => ({ asteroid: [...state.asteroid, props] })),
-    hitAsteroid: ({ uuid }) =>
-        set((state) => ({
-            asteroid: [...state.asteroid].map((asteroid) => {
-                if (asteroid.uuid === uuid) {
-                    asteroid.health = asteroid.health - 1;
-                }
-                return asteroid;
-            }),
-        })),
-}));
+import { useAsteroid, useAudio } from '../../../hooks';
+import { stoneImpactDefaultSound } from '../effects/Audio';
+import { getChoice, getRandomInRangeFloat, getRandomSign } from '../helpers/getRandomValues';
 
 export const Asteroids = ({ explosionCallback }) => {
     const materials1 = useLoader(MTLLoader, 'models/asteroid1.mtl');
@@ -91,6 +78,8 @@ export const Asteroids = ({ explosionCallback }) => {
 const Asteroid = ({ explosionCallback, uuid, dimension, ...props }) => {
     const asteroidBody = useRef();
 
+    const audio = useAudio((state) => state.audio);
+
     const hitAsteroidCallback = useAsteroid((state) => state.hitAsteroid);
     const hitAsteroid = useCallback(() => {
         hitAsteroidCallback({ uuid });
@@ -124,35 +113,39 @@ const Asteroid = ({ explosionCallback, uuid, dimension, ...props }) => {
                 fadeOutSpeed: 0.005,
                 spreadSpeed: 0.3 / sizeCoeff,
             });
+            if (audio) {
+                stoneImpactDefaultSound.isPlaying && stoneImpactDefaultSound.stop();
+                stoneImpactDefaultSound.play();
+            }
         }
     };
 
     const rotation = useMemo(() => {
         return {
-            y: getRandomInRange(0, 650) * getRandomSign(),
+            y: getRandomInRangeFloat(0, 2) * getRandomSign(),
             z: getRandomInRangeFloat(0.0004, 0.015) * getRandomSign(),
         };
     }, []);
 
     const linvel = useMemo(() => {
         return {
-            x: getRandomInRangeFloat(100, 1700) * getRandomSign(),
-            z: getRandomInRangeFloat(100, 1700) * getRandomSign(),
+            x: getRandomInRangeFloat(1.5, 7) * getRandomSign(),
+            z: getRandomInRangeFloat(1.5, 7) * getRandomSign(),
         };
     }, []);
 
-    useFrame((_, delta) => {
+    useFrame(() => {
         if (props.health > 0 && asteroidBody.current) {
             asteroidBody.current.setLinvel({
-                x: linvel.x * delta,
+                x: linvel.x,
                 y: 0,
-                z: linvel.z * delta,
+                z: linvel.z,
             });
 
             asteroid.rotation.z += rotation.z;
             const currentAngvel = asteroidBody.current.angvel();
             if (Math.abs(currentAngvel.y) < 1) {
-                asteroidBody.current.applyTorqueImpulse({ x: 0, y: rotation.y * delta, z: 0 });
+                asteroidBody.current.applyTorqueImpulse({ x: 0, y: rotation.y, z: 0 });
             }
         }
     });

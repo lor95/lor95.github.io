@@ -2,7 +2,7 @@ import { StyleSheet, css } from 'aphrodite';
 import { SiTarget } from 'react-icons/si';
 
 import { centerReferralDimension } from '../../../constants';
-import { useReferral } from '../Space';
+import { useReferral } from '../../../hooks';
 
 const styles = StyleSheet.create({
     referralContainer: {

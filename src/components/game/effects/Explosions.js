@@ -2,15 +2,9 @@ import { useBVH } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils } from 'three';
-import create from 'zustand';
 
+import { useAudio, useExplosion } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
-import { useAudio } from './Audio';
-
-export const useExplosion = create((set) => ({
-    explosion: [],
-    addExplosion: (props) => set((state) => ({ explosion: [...state.explosion, props] })),
-}));
 
 export const Explosions = ({ explosionSounds }) => {
     const explosion = useExplosion((state) => state.explosion);

@@ -2,16 +2,10 @@ import { useBVH } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { CuboidCollider } from '@react-three/rapier';
 import { useEffect, useRef, useState } from 'react';
-import create from 'zustand';
 
 import { explosionColorsArr, laserDecayTime } from '../../../constants';
+import { useAudio, useLaser } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
-import { useAudio } from './Audio';
-
-export const useLaser = create((set) => ({
-    laser: [],
-    addLaser: (props) => set((state) => ({ laser: [...state.laser, props] })),
-}));
 
 export const Lasers = ({ laserSounds, explosionCallback }) => {
     const laser = useLaser((state) => state.laser);

@@ -7,7 +7,7 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { starshipFireRate } from '../../../constants';
-import { useJoystickControls } from '../gameControls/JoystickController';
+import { useJoystickControls } from '../../../hooks';
 
 export const Starship = (props) => {
     const materials = useLoader(MTLLoader, 'models/starship.mtl');

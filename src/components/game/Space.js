@@ -1,27 +1,23 @@
 import { BakeShadows, Preload, useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
+import { EffectComposer, Outline } from '@react-three/postprocessing';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Frustum, Matrix4, Vector3 } from 'three';
 import { generateUUID } from 'three/src/math/MathUtils';
-import create from 'zustand';
 
-import { alienHealth, centerReferralDimension, planets, spaceDimensions } from '../../constants';
+import { alienHealth, centerReferralDimension, spaceDimensions } from '../../constants';
+import { useAlien, useAsteroid, useExplosion, useLaser, usePlanet, useReferral } from '../../hooks';
 import { explosionDefaultSound, laserDefaultSound } from './effects/Audio';
-import { Explosions, useExplosion } from './effects/Explosions';
-import { Lasers, useLaser } from './effects/Lasers';
-import { Aliens, useAlien } from './entities/Aliens';
-import { Asteroids, useAsteroid } from './entities/Asteroids';
+import { Explosions } from './effects/Explosions';
+import { Lasers } from './effects/Lasers';
+import { Aliens } from './entities/Aliens';
+import { Asteroids } from './entities/Asteroids';
 import { Planet } from './entities/Planet';
 import { Starship } from './entities/Starship';
 import { getChoice, getRandomInRange, getSpawnCoords } from './helpers/getRandomValues';
 
 const { innerWidth: width, innerHeight: height } = window;
-
-export const useReferral = create((set) => ({
-    referral: {},
-    setReferral: (x, y) => set(() => ({ referral: { x, y } })),
-}));
 
 export const Space = (props) => {
     let textureFile;
@@ -34,6 +30,36 @@ export const Space = (props) => {
     width > height ? (textureFile = 'images/space-w.jpg') : (textureFile = 'images/space-h.jpg');
 
     const texture = useTexture(textureFile);
+
+    const highlight = usePlanet((state) => state.highlight);
+    const setHighlightCallback = usePlanet((state) => state.setHighlight);
+    const setHighlight = useCallback(
+        (value) => {
+            setHighlightCallback(value);
+        },
+        [setHighlightCallback]
+    );
+
+    const planets = {
+        alpha: {
+            position: [2, 5, 14],
+            dimensions: [9, 60, 40],
+            baseTexture: 'water-texture.jpg',
+            rotationY: 0.0001,
+            rotationZ: 0.001,
+            planetRef: useRef(),
+            highlighted: false,
+        },
+        beta: {
+            position: [-30, 5, -7],
+            dimensions: [12, 60, 40],
+            baseTexture: 'green-texture.jpg',
+            rotationY: 0.002,
+            rotationZ: 0.0001,
+            planetRef: useRef(),
+            highlighted: false,
+        },
+    };
 
     const setReferralCallback = useReferral((state) => state.setReferral);
     const setReferral = useCallback(
@@ -93,11 +119,15 @@ export const Space = (props) => {
                 <Planet
                     key={generateUUID()}
                     name={planetName}
+                    planet={planets[planetName].planetRef}
                     position={planets[planetName].position}
                     dimensions={planets[planetName].dimensions}
                     baseTexture={planets[planetName].baseTexture}
+                    rotationY={planets[planetName].rotationY}
+                    rotationZ={planets[planetName].rotationZ}
                 />
             )),
+        // eslint-disable-next-line
         []
     );
 
@@ -116,6 +146,15 @@ export const Space = (props) => {
     };
 
     useEffect(() => {
+        setHighlight(
+            Object.keys(planets)
+                .map((planetName) => {
+                    let highlightedPlanet = {};
+                    highlightedPlanet[planetName] = planets[planetName].highlighted;
+                    return highlightedPlanet;
+                })
+                .reduce((r, c) => Object.assign(r, c), {})
+        );
         spawnAsteroidLoop(getRandomInRange(2000, 4500));
         spawnAlienLoop(getRandomInRange(500, 1200));
         // eslint-disable-next-line
@@ -143,6 +182,19 @@ export const Space = (props) => {
         <Suspense fallback={null}>
             <Preload all />
             <BakeShadows />
+            {Object.keys(highlight).some((planetName) => highlight[planetName]) && (
+                <EffectComposer autoClear={false} multisampling={0} stencilBuffer={false}>
+                    <Outline
+                        xRay
+                        selection={
+                            planets[Object.keys(highlight).filter((planetName) => highlight[planetName])[0]].planetRef
+                        }
+                        visibleEdgeColor="#ffffff"
+                        edgeStrength={140}
+                        blur
+                    />
+                </EffectComposer>
+            )}
             {/* Background */}
             <primitive attach="background" object={texture} />
             <RigidBody friction={0} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>

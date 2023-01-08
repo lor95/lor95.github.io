@@ -2,9 +2,10 @@ import { StyleSheet, css } from 'aphrodite';
 import { useCallback } from 'react';
 import { FaFireAlt } from 'react-icons/fa';
 import ReactNipple from 'react-nipple';
-import create from 'zustand';
 
+import { defaultController } from '../../../constants';
 import { starshipFireRate } from '../../../constants';
+import { useJoystickControls } from '../../../hooks';
 
 const styles = StyleSheet.create({
     fireContainer: {
@@ -32,13 +33,6 @@ const styles = StyleSheet.create({
         borderRadius: 100,
     },
 });
-
-const defaultController = { forward: false, backward: false, left: false, right: false, fire: false };
-
-export const useJoystickControls = create((set) => ({
-    controller: defaultController,
-    updateController: (props) => set((state) => ({ controller: { ...state.controller, ...props } })),
-}));
 
 export const JoystickController = () => {
     let canClick = true;

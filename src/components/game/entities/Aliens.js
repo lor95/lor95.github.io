@@ -5,25 +5,10 @@ import { useCallback, useMemo, useRef } from 'react';
 import { Euler, Quaternion, Vector2, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import create from 'zustand';
 
 import { alienFireRate, explosionColorsArr } from '../../../constants';
+import { useAlien } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
-
-export const useAlien = create((set) => ({
-    alien: [],
-    addAlien: (props) => set((state) => ({ alien: [...state.alien, props] })),
-    hitAlien: ({ uuid }) =>
-        set((state) => ({
-            alien: [...state.alien].map((alien) => {
-                if (alien.uuid === uuid) {
-                    alien.health = alien.health - 1;
-                }
-                return alien;
-            }),
-        })),
-    // removeAlien: ({ uuid }) => set((state) => ({ alien: [...state.alien].filter((alien) => alien.uuid !== uuid) })),
-}));
 
 export const Aliens = ({ starshipBody, explosionCallback, laserCallback }) => {
     const alien = useAlien((state) => state.alien);
@@ -68,7 +53,6 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
     // }, [removeAlienCallback, uuid]);
 
     useMemo(() => {
-        console.log('alien spawned at', coords);
         setInterval(() => {
             if (health > 0 && alienBody.current && alien) {
                 const currentPosition = alienBody.current.translation();

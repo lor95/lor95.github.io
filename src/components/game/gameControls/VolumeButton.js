@@ -1,7 +1,7 @@
 import { StyleSheet, css } from 'aphrodite';
 import { FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 
-import { useAudio } from '../effects/Audio';
+import { useAudio } from '../../../hooks';
 
 const styles = StyleSheet.create({
     button: {
