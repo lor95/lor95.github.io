@@ -1,3 +1,4 @@
+export const centerReferralDimension = 16;
 export const mobileOperatingSystem = window.navigator.userAgent.indexOf('Mobile') !== -1;
 export const explosionColorsArr = [
     '#e7dad8',
@@ -19,5 +20,5 @@ export const alienSpawnDistance = 140; // coord
 export const asteroidSpawnDistance = 100; // coord
 export const spaceDimensions = [5000, 5000, 9];
 export const planets = {
-    neptune: { position: [23, 5, 14], dimensions: [16, 60, 40], baseTexture: 'water-texture.jpg' },
+    alpha: { position: [2, 5, 14], dimensions: [9, 60, 40], baseTexture: 'water-texture.jpg' },
 };

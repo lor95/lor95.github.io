@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: 'white',
         gap: 10,
-        zIndex: 1,
+        zIndex: 2,
     },
 });
 

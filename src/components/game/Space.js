@@ -1,9 +1,12 @@
 import { BakeShadows, Preload, useTexture } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
+import { Frustum, Matrix4, Vector3 } from 'three';
 import { generateUUID } from 'three/src/math/MathUtils';
+import create from 'zustand';
 
-import { alienHealth, planets, spaceDimensions } from '../../constants';
+import { alienHealth, centerReferralDimension, planets, spaceDimensions } from '../../constants';
 import { explosionDefaultSound, laserDefaultSound } from './effects/Audio';
 import { Explosions, useExplosion } from './effects/Explosions';
 import { Lasers, useLaser } from './effects/Lasers';
@@ -13,21 +16,32 @@ import { Planet } from './entities/Planet';
 import { Starship } from './entities/Starship';
 import { getChoice, getRandomInRange, getSpawnCoords } from './helpers/getRandomValues';
 
-const getWindowDimensions = () => {
-    const { innerWidth: width, innerHeight: height } = window;
-    return {
-        width,
-        height,
-    };
-};
+const { innerWidth: width, innerHeight: height } = window;
+
+export const useReferral = create((set) => ({
+    referral: {},
+    setReferral: (x, y) => set(() => ({ referral: { x, y } })),
+}));
 
 export const Space = (props) => {
     let textureFile;
     const starshipBody = useRef();
 
-    const dimensions = getWindowDimensions();
-    dimensions.width > dimensions.height ? (textureFile = 'images/space-w.jpg') : (textureFile = 'images/space-h.jpg');
+    const frustum = new Frustum();
+    const spaceCenter = new Vector3(0, 0, 0);
+    const projCoords = new Vector3(0, 0, 0);
+
+    width > height ? (textureFile = 'images/space-w.jpg') : (textureFile = 'images/space-h.jpg');
+
     const texture = useTexture(textureFile);
+
+    const setReferralCallback = useReferral((state) => state.setReferral);
+    const setReferral = useCallback(
+        (x, y) => {
+            setReferralCallback(x, y);
+        },
+        [setReferralCallback]
+    );
 
     const addExplosion = useExplosion((state) => state.addExplosion);
     const createExplosion = useCallback(
@@ -90,14 +104,14 @@ export const Space = (props) => {
     const spawnAlienLoop = (time) => {
         setTimeout(() => {
             spawnAlien();
-            spawnAlienLoop(getRandomInRange(15000, 35000));
+            spawnAlienLoop(getRandomInRange(9000, 35000));
         }, time);
     };
 
     const spawnAsteroidLoop = (time) => {
         setTimeout(() => {
             spawnAsteroid();
-            spawnAsteroidLoop(getRandomInRange(800, 1600));
+            spawnAsteroidLoop(getRandomInRange(2000, 6000));
         }, time);
     };
 
@@ -106,6 +120,24 @@ export const Space = (props) => {
         spawnAlienLoop(getRandomInRange(500, 1200));
         // eslint-disable-next-line
     }, []);
+
+    useFrame(({ camera, size }) => {
+        frustum.setFromProjectionMatrix(
+            new Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
+        );
+        if (!frustum.containsPoint(spaceCenter)) {
+            projCoords.project(camera);
+            let x = Math.round((0.5 + projCoords.x / 2) * size.width);
+            let y = Math.round((0.5 - projCoords.y / 2) * size.height);
+            if (x <= 5) x = 5;
+            if (x > width - centerReferralDimension - 5) x = width - centerReferralDimension - 5;
+            if (y <= 5) y = 5;
+            if (y > height - centerReferralDimension - 5) y = height - centerReferralDimension - 5;
+            setReferral(x, y);
+        } else {
+            setReferral(-1, -1);
+        }
+    });
 
     return (
         <Suspense fallback={null}>

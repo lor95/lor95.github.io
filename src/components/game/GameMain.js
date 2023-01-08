@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { mobileOperatingSystem } from '../../constants';
 import { Space } from './Space';
 import { ButtonContainer } from './gameControls/ButtonContainer';
+import { CenterReferral } from './gameControls/CenterReferral';
 import { JoystickController } from './gameControls/JoystickController';
 
 export const GameMain = (props) => {
@@ -13,6 +14,7 @@ export const GameMain = (props) => {
     return (
         <>
             <ButtonContainer />
+            <CenterReferral />
             {(mobileOperatingSystem || props.debug) && <JoystickController />}
             <KeyboardControls
                 map={[
