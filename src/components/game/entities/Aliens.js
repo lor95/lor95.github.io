@@ -1,13 +1,13 @@
 import { useBVH } from '@react-three/drei';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
-import { useCallback, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { Euler, Quaternion, Vector2, Vector3 } from 'three';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { alienFireRate, explosionColorsArr } from '../../../constants';
-import { useAlien } from '../../../hooks';
+import { useAlien, usePlay } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
 
 export const Aliens = ({ starshipBody, explosionCallback, laserCallback }) => {
@@ -42,11 +42,12 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
     const refQuaternion = new Quaternion();
     refQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
 
-    const hitAlienCallback = useAlien((state) => state.hitAlien);
-    const hitAlien = useCallback(() => {
-        hitAlienCallback({ uuid });
-    }, [hitAlienCallback, uuid]);
+    const { hitAlien } = useAlien();
+    // const hitAlien = useCallback(() => {
+    //     hitAlienCallback({ uuid });
+    // }, [hitAlienCallback, uuid]);
 
+    const { playing } = usePlay();
     // const removeAlienCallback = useAlien((state) => state.removeAlien);
     // const removeAlien = useCallback(() => {
     //     removeAlienCallback({ uuid });
@@ -54,7 +55,7 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
 
     useMemo(() => {
         setInterval(() => {
-            if (health > 0 && alienBody.current && alien) {
+            if (playing && health > 0 && alienBody.current && alien) {
                 const currentPosition = alienBody.current.translation();
                 const currentRotation = alienBody.current.rotation();
 
@@ -80,11 +81,12 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
                 });
             }
         }, alienFireRate);
+
         /* eslint-disable-next-line */
-    }, [laserCallback]);
+    }, [laserCallback, playing]);
 
     useFrame(() => {
-        if (health > 0) {
+        if (playing && health > 0) {
             const diffAngle = new Vector2(
                 starshipBody.current.translation().x - alienBody.current.translation().x,
                 starshipBody.current.translation().z - alienBody.current.translation().z
@@ -124,7 +126,7 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
                     position={[0, 9, 0]}
                     onIntersectionEnter={({ colliderObject }) => {
                         if (colliderObject.name === 'starship_laser') {
-                            hitAlien();
+                            hitAlien({ uuid });
                             if (health === 1) {
                                 const currentPosition = alienBody.current.translation();
                                 explosionCallback({

@@ -1,5 +1,4 @@
 import { StyleSheet, css } from 'aphrodite';
-import { useCallback } from 'react';
 import { FaFireAlt } from 'react-icons/fa';
 import ReactNipple from 'react-nipple';
 
@@ -37,14 +36,7 @@ const styles = StyleSheet.create({
 export const JoystickController = () => {
     let canClick = true;
 
-    const updateControllerCallback = useJoystickControls((state) => state.updateController);
-    const updateController = useCallback(
-        (props) => {
-            updateControllerCallback(props);
-        },
-        [updateControllerCallback]
-    );
-
+    const { updateController } = useJoystickControls();
     const handleJoystickEnd = () => {
         updateController(defaultController);
     };

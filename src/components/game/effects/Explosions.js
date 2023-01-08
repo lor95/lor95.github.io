@@ -3,11 +3,11 @@ import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils } from 'three';
 
-import { useAudio, useExplosion } from '../../../hooks';
+import { useAudio, useExplosion, usePlay } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
 
 export const Explosions = ({ explosionSounds }) => {
-    const explosion = useExplosion((state) => state.explosion);
+    const { explosion } = useExplosion();
     return explosion.map((props, index) => (
         <Explosion
             key={index}
@@ -24,9 +24,12 @@ export const Explosions = ({ explosionSounds }) => {
 
 const Explosion = ({ position, count, color, size, spreadSpeed, fadeOutSpeed, explosionSounds }) => {
     const points = useRef();
-    const visiblePoints = useRef();
     useBVH(points);
+    const visiblePoints = useRef();
     const [visible, setVisible] = useState(true);
+
+    const { playing } = usePlay();
+    const { audio } = useAudio();
 
     let particlesPosition = useMemo(() => {
         const positions = new Float32Array(count * 3);
@@ -45,18 +48,16 @@ const Explosion = ({ position, count, color, size, spreadSpeed, fadeOutSpeed, ex
         return positions;
     }, [count]);
 
-    const audio = useAudio((state) => state.audio);
-
     useEffect(() => {
-        if (audio) {
+        if (audio && playing) {
             const explosionSound = getChoice(explosionSounds);
             explosionSound.isPlaying && explosionSound.stop();
             explosionSound.play();
         }
-    }, [explosionSounds, audio]);
+    }, [explosionSounds, audio, playing]);
 
     useFrame(({ clock }) => {
-        if (visible) {
+        if (visible && playing) {
             visiblePoints.current.opacity -= fadeOutSpeed;
 
             if (visiblePoints.current.opacity <= 0) {

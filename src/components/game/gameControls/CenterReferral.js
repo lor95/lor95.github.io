@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 });
 
 export const CenterReferral = () => {
-    const referral = useReferral((state) => state.referral);
+    const { referral } = useReferral();
     return (
         referral.x >= 0 &&
         referral.y >= 0 && (

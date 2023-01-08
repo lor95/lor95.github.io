@@ -1,23 +1,20 @@
 import { useBVH } from '@react-three/drei';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { BallCollider, RigidBody } from '@react-three/rapier';
-import { useCallback } from 'react';
 import { RepeatWrapping, TextureLoader } from 'three';
 
-import { usePlanet } from '../../../hooks';
+import { usePlanet, usePlay } from '../../../hooks';
 
 export const Planet = (props) => {
     // https://codesandbox.io/s/textured-sphere-jsy9s?from-embed
     const highlight = usePlanet((state) => state.highlight)[props.name];
-    const setHighlightCallback = usePlanet((state) => state.setHighlight);
-    const setHighlight = useCallback(
-        (value) => {
-            let tempValue = {};
-            tempValue[props.name] = value;
-            setHighlightCallback(tempValue);
-        },
-        [setHighlightCallback, props.name]
-    );
+    const { setHighlight: setHighlightCallback } = usePlanet();
+    const setHighlight = (value) => {
+        let tempValue = {};
+        tempValue[props.name] = value;
+        setHighlightCallback(tempValue);
+    };
+    const { playing } = usePlay();
 
     const base = useLoader(TextureLoader, `images/${props.baseTexture}`);
     base.wrapS = RepeatWrapping;
@@ -26,7 +23,7 @@ export const Planet = (props) => {
     useBVH(base);
 
     useFrame(() => {
-        if (props.planet.current) {
+        if (playing && props.planet.current) {
             props.planet.current.rotation.y += props.rotationY;
             props.planet.current.rotation.z += props.rotationZ;
         }

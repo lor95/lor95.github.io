@@ -2,6 +2,11 @@ import create from 'zustand';
 
 import { defaultController } from './constants';
 
+export const usePlay = create((set) => ({
+    playing: true,
+    togglePlaying: () => set((state) => ({ playing: !state.playing })),
+}));
+
 export const useJoystickControls = create((set) => ({
     controller: defaultController,
     updateController: (props) => set((state) => ({ controller: { ...state.controller, ...props } })),

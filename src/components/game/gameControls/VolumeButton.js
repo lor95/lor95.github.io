@@ -19,8 +19,7 @@ const styles = StyleSheet.create({
 });
 
 export const VolumeButton = () => {
-    const toggleAudio = useAudio((state) => state.toggleAudio);
-    const audio = useAudio((state) => state.audio);
+    const { audio, toggleAudio } = useAudio();
 
     return (
         <div

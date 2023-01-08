@@ -1,11 +1,11 @@
 import { useFrame, useLoader } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
-import { useCallback, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { explosionColorsArr } from '../../../constants';
-import { useAsteroid, useAudio } from '../../../hooks';
+import { useAsteroid, useAudio, usePlay } from '../../../hooks';
 import { stoneImpactDefaultSound } from '../effects/Audio';
 import { getChoice, getRandomInRangeFloat, getRandomSign } from '../helpers/getRandomValues';
 
@@ -58,7 +58,7 @@ export const Asteroids = ({ explosionCallback }) => {
         },
     };
 
-    const asteroid = useAsteroid((state) => state.asteroid);
+    const { asteroid } = useAsteroid();
     return asteroid.map((props, index) => (
         <Asteroid
             key={index}
@@ -78,12 +78,9 @@ export const Asteroids = ({ explosionCallback }) => {
 const Asteroid = ({ explosionCallback, uuid, dimension, ...props }) => {
     const asteroidBody = useRef();
 
-    const audio = useAudio((state) => state.audio);
-
-    const hitAsteroidCallback = useAsteroid((state) => state.hitAsteroid);
-    const hitAsteroid = useCallback(() => {
-        hitAsteroidCallback({ uuid });
-    }, [hitAsteroidCallback, uuid]);
+    const { audio } = useAudio();
+    const { playing } = usePlay();
+    const { hitAsteroid } = useAsteroid();
 
     const asteroid = useMemo(
         () => props.mesh,
@@ -103,7 +100,7 @@ const Asteroid = ({ explosionCallback, uuid, dimension, ...props }) => {
             } else if (dimension === 'lg' || dimension === 'xl') {
                 sizeCoeff = 1;
             }
-            hitAsteroid();
+            hitAsteroid({ uuid });
             const currentPosition = asteroidBody.current.translation();
             explosionCallback({
                 position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
@@ -135,7 +132,7 @@ const Asteroid = ({ explosionCallback, uuid, dimension, ...props }) => {
     }, []);
 
     useFrame(() => {
-        if (props.health > 0 && asteroidBody.current) {
+        if (playing && props.health > 0 && asteroidBody.current) {
             asteroidBody.current.setLinvel({
                 x: linvel.x,
                 y: 0,

@@ -4,11 +4,11 @@ import { CuboidCollider } from '@react-three/rapier';
 import { useEffect, useRef, useState } from 'react';
 
 import { explosionColorsArr, laserDecayTime } from '../../../constants';
-import { useAudio, useLaser } from '../../../hooks';
+import { useAudio, useLaser, usePlay } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
 
 export const Lasers = ({ laserSounds, explosionCallback }) => {
-    const laser = useLaser((state) => state.laser);
+    const { laser } = useLaser();
     return laser.map((props, index) => (
         <Laser
             key={index}
@@ -29,24 +29,25 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
     useBVH(laser);
     const [visible, setVisible] = useState(true);
 
+    const { playing } = usePlay();
+    const { audio } = useAudio();
+
     useEffect(() => {
         setTimeout(() => {
-            setVisible(false);
+            playing && setVisible(false);
         }, laserDecayTime);
-    }, []);
-
-    const audio = useAudio((state) => state.audio);
+    }, [playing]);
 
     useEffect(() => {
-        if (audio) {
+        if (audio && playing) {
             const laserSound = getChoice(laserSounds);
             laserSound.isPlaying && laserSound.stop();
             laserSound.play();
         }
-    }, [laserSounds, audio]);
+    }, [laserSounds, audio, playing]);
 
     useFrame((_, delta) => {
-        if (collider && laser && visible) {
+        if (playing && collider && laser && visible) {
             laser.current.position.x += direction.x * 75 * delta;
             laser.current.position.z += direction.z * 75 * delta;
             collider.current[0].setTranslation({

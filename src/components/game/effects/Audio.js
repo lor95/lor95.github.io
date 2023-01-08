@@ -1,6 +1,5 @@
 import { AudioListener, AudioLoader, PositionalAudio } from 'three';
 
-
 export const laserDefaultSound = new PositionalAudio(new AudioListener());
 export const explosionDefaultSound = new PositionalAudio(new AudioListener());
 export const stoneImpactDefaultSound = new PositionalAudio(new AudioListener());
