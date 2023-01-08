@@ -22,7 +22,6 @@ const { innerWidth: width, innerHeight: height } = window;
 export const Space = (props) => {
     let textureFile;
     const starshipBody = useRef();
-    const playing = usePlay((state) => state.playing);
 
     const frustum = new Frustum();
     const spaceCenter = new Vector3(0, 0, 0);
@@ -38,6 +37,7 @@ export const Space = (props) => {
     const { addLaser } = useLaser();
     const { addAsteroid } = useAsteroid();
     const { addAlien } = useAlien();
+    const { playing } = usePlay();
 
     const planets = {
         alpha: {
