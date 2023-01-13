@@ -3,7 +3,8 @@ import { StyleSheet, css } from 'aphrodite';
 import { GameMain } from './components/game/GameMain';
 import { usePlay } from './hooks';
 
-const debug = false;
+const debug = true;
+const highQuality = true;
 
 const styles = StyleSheet.create({
     app: {
@@ -29,7 +30,7 @@ function App() {
             {/* <button style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }} onClick={() => togglePlayingHandler()}>
                 pause/resume
             </button> */}
-            <GameMain debug={debug} />
+            <GameMain debug={debug} highQuality={highQuality} />
         </div>
     );
 }

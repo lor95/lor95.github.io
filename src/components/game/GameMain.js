@@ -9,13 +9,13 @@ import { ButtonContainer } from './gameControls/ButtonContainer';
 import { CenterReferral } from './gameControls/CenterReferral';
 import { JoystickController } from './gameControls/JoystickController';
 
-export const GameMain = (props) => {
-    const [dpr, setDpr] = useState(0.8);
+export const GameMain = ({ debug, highQuality }) => {
+    const [dpr, setDpr] = useState(highQuality ? 0.8 : 0.5);
     return (
         <>
             <ButtonContainer />
             <CenterReferral />
-            {(mobileOperatingSystem || props.debug) && <JoystickController />}
+            {(mobileOperatingSystem || debug) && <JoystickController />}
             <KeyboardControls
                 map={[
                     { name: 'forward', keys: ['ArrowUp'] },
@@ -26,13 +26,16 @@ export const GameMain = (props) => {
                 ]}
             >
                 <Canvas linear flat resize={{ scroll: false }} dpr={dpr}>
-                    <PerformanceMonitor onIncline={() => setDpr(1)} onDecline={() => setDpr(0.6)} />
+                    <PerformanceMonitor
+                        onIncline={() => setDpr(highQuality ? 0.9 : 0.8)}
+                        onDecline={() => setDpr(highQuality ? 0.7 : 0.4)}
+                    />
                     <AdaptiveDpr pixelated />
                     <AdaptiveEvents />
                     <Physics colliders={false} gravity={[0, -40, 0]}>
-                        <Space debug={props.debug} />
-                        {props.debug && <Debug />}
-                        {props.debug && <Stats />}
+                        <Space debug={debug} highQuality={highQuality} />
+                        {debug && <Debug />}
+                        {debug && <Stats />}
                     </Physics>
                 </Canvas>
             </KeyboardControls>

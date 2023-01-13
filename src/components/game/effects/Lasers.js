@@ -7,7 +7,7 @@ import { explosionColorsArr, laserDecayTime } from '../../../constants';
 import { useAudio, useLaser, usePlay } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
 
-export const Lasers = ({ laserSounds, explosionCallback }) => {
+export const Lasers = ({ highQuality, laserSounds, explosionCallback }) => {
     const { laser } = useLaser();
     return laser.map((props, index) => (
         <Laser
@@ -19,11 +19,12 @@ export const Lasers = ({ laserSounds, explosionCallback }) => {
             direction={props.direction}
             explosionCallback={explosionCallback}
             laserSounds={laserSounds}
+            highQuality={highQuality}
         />
     ));
 };
 
-const Laser = ({ name, color, position, rotation, direction, explosionCallback, laserSounds }) => {
+const Laser = ({ name, color, position, rotation, direction, explosionCallback, laserSounds, highQuality }) => {
     const laser = useRef();
     const collider = useRef();
     useBVH(laser);
@@ -75,18 +76,19 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
                             (colliderObject.name === 'starship' && name !== 'starship_laser') ||
                             colliderObject.name.startsWith('asteroid')
                         ) {
-                            explosionCallback({
-                                position: [
-                                    laser.current.position.x,
-                                    laser.current.position.y,
-                                    laser.current.position.z,
-                                ],
-                                color: getChoice(explosionColorsArr),
-                                count: 30,
-                                size: 0.5,
-                                fadeOutSpeed: 0.025,
-                                spreadSpeed: 0.1,
-                            });
+                            highQuality &&
+                                explosionCallback({
+                                    position: [
+                                        laser.current.position.x,
+                                        laser.current.position.y,
+                                        laser.current.position.z,
+                                    ],
+                                    color: getChoice(explosionColorsArr),
+                                    count: 30,
+                                    size: 0.5,
+                                    fadeOutSpeed: 0.025,
+                                    spreadSpeed: 0.1,
+                                });
                             setVisible(false);
                         }
                     }}

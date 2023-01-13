@@ -1,6 +1,8 @@
+import { useBVH } from '@react-three/drei';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { useMemo, useRef } from 'react';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
@@ -9,9 +11,15 @@ import { useAsteroid, useAudio, usePlay } from '../../../hooks';
 import { stoneImpactDefaultSound } from '../effects/Audio';
 import { getChoice, getRandomInRangeFloat, getRandomSign } from '../helpers/getRandomValues';
 
-export const Asteroids = ({ explosionCallback }) => {
+export const Asteroids = ({ explosionCallback, highQuality }) => {
     const materials1 = useLoader(MTLLoader, 'models/asteroid1.mtl');
     const materials2 = useLoader(MTLLoader, 'models/asteroid2.mtl');
+    const highAsteroid1 = useLoader(OBJLoader, 'models/asteroid1.obj', (loader) => {
+        materials1.preload();
+        loader.setMaterials(materials1);
+    });
+    const lowAsteroid1 = useLoader(GLTFLoader, 'models/asteroid1.glb').scene;
+
     const asteroids = {
         asteroid1: {
             scale: {
@@ -22,10 +30,7 @@ export const Asteroids = ({ explosionCallback }) => {
                 xl: 0.0058,
             },
             y: 8.5,
-            mesh: useLoader(OBJLoader, 'models/asteroid1.obj', (loader) => {
-                materials1.preload();
-                loader.setMaterials(materials1);
-            }),
+            mesh: highQuality ? highAsteroid1 : lowAsteroid1,
 
             collider: {
                 xs: { args: [0.8, 0.5, 0.8], position: [-0.8, 9, 0] },
@@ -71,11 +76,12 @@ export const Asteroids = ({ explosionCallback }) => {
             mesh={asteroids[props.asteroidKey].mesh.clone()}
             collider={asteroids[props.asteroidKey].collider[props.dimension]}
             explosionCallback={explosionCallback}
+            highQuality={highQuality}
         />
     ));
 };
 
-const Asteroid = ({ explosionCallback, uuid, dimension, ...props }) => {
+const Asteroid = ({ explosionCallback, uuid, dimension, highQuality, ...props }) => {
     const asteroidBody = useRef();
 
     const { audio } = useAudio();
@@ -87,6 +93,7 @@ const Asteroid = ({ explosionCallback, uuid, dimension, ...props }) => {
         // eslint-disable-next-line
         []
     );
+    useBVH(asteroid);
 
     const collisionCallback = (colliderObject) => {
         if (
@@ -102,14 +109,15 @@ const Asteroid = ({ explosionCallback, uuid, dimension, ...props }) => {
             }
             hitAsteroid({ uuid });
             const currentPosition = asteroidBody.current.translation();
-            explosionCallback({
-                position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
-                color: getChoice(explosionColorsArr),
-                count: 300 / sizeCoeff,
-                size: 0.7,
-                fadeOutSpeed: 0.005,
-                spreadSpeed: 0.3 / sizeCoeff,
-            });
+            highQuality &&
+                explosionCallback({
+                    position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
+                    color: getChoice(explosionColorsArr),
+                    count: 300 / sizeCoeff,
+                    size: 0.7,
+                    fadeOutSpeed: 0.005,
+                    spreadSpeed: 0.3 / sizeCoeff,
+                });
             if (audio) {
                 stoneImpactDefaultSound.isPlaying && stoneImpactDefaultSound.stop();
                 stoneImpactDefaultSound.play();
@@ -149,7 +157,12 @@ const Asteroid = ({ explosionCallback, uuid, dimension, ...props }) => {
 
     return (
         props.health > 0 && (
-            <RigidBody friction={0} ref={asteroidBody} position={[props.coords.x, 1, props.coords.z]}>
+            <RigidBody
+                friction={0}
+                ref={asteroidBody}
+                position={[props.coords.x, 1, props.coords.z]}
+                enabledRotations={[false, true, false]}
+            >
                 <primitive
                     position={[0, props.y, 0]}
                     object={asteroid}

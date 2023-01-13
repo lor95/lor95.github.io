@@ -33,7 +33,7 @@ export const Planet = (props) => {
     atmosphereDimensions[0] = atmosphereDimensions[0] + 5;
 
     return (
-        <RigidBody position={props.position} mass={0}>
+        <RigidBody position={props.position} mass={0} enabledRotations={[false, false, false]}>
             <mesh
                 key={props.name}
                 position={props.position}

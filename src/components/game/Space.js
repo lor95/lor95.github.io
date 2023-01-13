@@ -61,16 +61,26 @@ export const Space = (props) => {
     };
 
     const starshipComponent = useMemo(
-        () => <Starship starshipBody={starshipBody} laserCallback={addLaser} />,
-        [addLaser]
+        () => <Starship starshipBody={starshipBody} laserCallback={addLaser} highQuality={props.highQuality} />,
+        [addLaser, props.highQuality]
     );
 
     const alienComponents = useMemo(
-        () => <Aliens starshipBody={starshipBody} laserCallback={addLaser} explosionCallback={addExplosion} />,
-        [addLaser, addExplosion]
+        () => (
+            <Aliens
+                starshipBody={starshipBody}
+                laserCallback={addLaser}
+                explosionCallback={addExplosion}
+                highQuality={props.highQuality}
+            />
+        ),
+        [addLaser, addExplosion, props.highQuality]
     );
 
-    const asteroidComponents = useMemo(() => <Asteroids explosionCallback={addExplosion} />, [addExplosion]);
+    const asteroidComponents = useMemo(
+        () => <Asteroids explosionCallback={addExplosion} highQuality={props.highQuality} />,
+        [addExplosion, props.highQuality]
+    );
 
     const planetComponents = useMemo(
         () =>
@@ -183,8 +193,12 @@ export const Space = (props) => {
             {alienComponents}
             {asteroidComponents}
             {planetComponents}
-            <Explosions explosionSounds={[explosionDefaultSound]} />
-            <Lasers explosionCallback={addExplosion} laserSounds={[laserDefaultSound]} />
+            {props.highQuality && <Explosions explosionSounds={[explosionDefaultSound]} />}
+            <Lasers
+                highQuality={props.highQuality}
+                explosionCallback={addExplosion}
+                laserSounds={[laserDefaultSound]}
+            />
         </Suspense>
     );
 };

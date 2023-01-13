@@ -3,18 +3,22 @@ import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { useMemo } from 'react';
 import { Euler, Quaternion, Vector3 } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { starshipFireRate } from '../../../constants';
 import { useJoystickControls, usePlay } from '../../../hooks';
 
-export const Starship = (props) => {
+export const Starship = ({ highQuality, ...props }) => {
+    let starship;
     const materials = useLoader(MTLLoader, 'models/starship.mtl');
-    const starship = useLoader(OBJLoader, 'models/starship.obj', (loader) => {
+    const highStarship = useLoader(OBJLoader, 'models/starship.obj', (loader) => {
         materials.preload();
         loader.setMaterials(materials);
     });
+    const lowStarship = useLoader(GLTFLoader, 'models/starship.glb').scene;
+    highQuality ? (starship = highStarship) : (starship = lowStarship);
     useBVH(starship);
 
     const { playing } = usePlay();

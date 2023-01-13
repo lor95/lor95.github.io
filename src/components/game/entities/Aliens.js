@@ -3,6 +3,7 @@ import { useFrame, useLoader } from '@react-three/fiber';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
 import { useMemo, useRef } from 'react';
 import { Euler, Quaternion, Vector2, Vector3 } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
@@ -10,14 +11,17 @@ import { alienFireRate, explosionColorsArr } from '../../../constants';
 import { useAlien, usePlay } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
 
-export const Aliens = ({ starshipBody, explosionCallback, laserCallback }) => {
+export const Aliens = ({ starshipBody, explosionCallback, laserCallback, highQuality }) => {
     const alien = useAlien((state) => state.alien);
+    let alienObj;
 
     const materials = useLoader(MTLLoader, 'models/ufo.mtl');
-    const alienObj = useLoader(OBJLoader, 'models/ufo.obj', (loader) => {
+    const highAlienObj = useLoader(OBJLoader, 'models/ufo.obj', (loader) => {
         materials.preload();
         loader.setMaterials(materials);
     });
+    const lowAlienObj = useLoader(GLTFLoader, 'models/ufo.glb').scene;
+    highQuality ? (alienObj = highAlienObj) : (alienObj = lowAlienObj);
     useBVH(alienObj);
 
     return alien.map((props, index) => (
@@ -30,11 +34,12 @@ export const Aliens = ({ starshipBody, explosionCallback, laserCallback }) => {
             starshipBody={starshipBody}
             health={props.health}
             coords={props.coords}
+            highQuality={highQuality}
         />
     ));
 };
 
-const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, laserCallback }) => {
+const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, laserCallback, highQuality }) => {
     const alienBody = useRef();
 
     const mainQuaternion = new Quaternion();
@@ -111,7 +116,12 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
 
     return (
         health > 0 && (
-            <RigidBody friction={0.1} ref={alienBody} position={[coords.x, 1, coords.z]}>
+            <RigidBody
+                friction={0.1}
+                ref={alienBody}
+                position={[coords.x, 1, coords.z]}
+                enabledRotations={[false, true, false]}
+            >
                 <primitive
                     position={[0, 6.5, 0]}
                     object={alien}
@@ -129,14 +139,15 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
                             hitAlien({ uuid });
                             if (health === 1) {
                                 const currentPosition = alienBody.current.translation();
-                                explosionCallback({
-                                    position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
-                                    color: getChoice(explosionColorsArr),
-                                    count: 300,
-                                    size: 0.7,
-                                    fadeOutSpeed: 0.005,
-                                    spreadSpeed: 0.4,
-                                });
+                                highQuality &&
+                                    explosionCallback({
+                                        position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
+                                        color: getChoice(explosionColorsArr),
+                                        count: 300,
+                                        size: 0.7,
+                                        fadeOutSpeed: 0.005,
+                                        spreadSpeed: 0.4,
+                                    });
                                 // removeAlien();
                             }
                         }
