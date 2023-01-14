@@ -9,6 +9,7 @@ import { getChoice } from '../helpers/getRandomValues';
 
 export const Lasers = ({ highQuality, laserSounds, explosionCallback }) => {
     const { laser } = useLaser();
+    console.log('ciao');
     return laser.map((props, index) => (
         <Laser
             key={index}
@@ -40,12 +41,13 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
     }, [playing]);
 
     useEffect(() => {
-        if (audio && playing) {
+        if (audio) {
             const laserSound = getChoice(laserSounds);
             laserSound.isPlaying && laserSound.stop();
             laserSound.play();
         }
-    }, [laserSounds, audio, playing]);
+        // eslint-disable-next-line
+    }, []);
 
     useFrame((_, delta) => {
         if (playing && collider && laser && visible) {

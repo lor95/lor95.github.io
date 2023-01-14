@@ -49,12 +49,13 @@ const Explosion = ({ position, count, color, size, spreadSpeed, fadeOutSpeed, ex
     }, [count]);
 
     useEffect(() => {
-        if (audio && playing) {
+        if (audio) {
             const explosionSound = getChoice(explosionSounds);
             explosionSound.isPlaying && explosionSound.stop();
             explosionSound.play();
         }
-    }, [explosionSounds, audio, playing]);
+        // eslint-disable-next-line
+    }, []);
 
     useFrame(({ clock }) => {
         if (visible && playing) {

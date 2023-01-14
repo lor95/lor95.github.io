@@ -27,9 +27,9 @@ function App() {
     };
     return (
         <div className={css(styles.app)}>
-            {/* <button style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }} onClick={() => togglePlayingHandler()}>
+            <button style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }} onClick={() => togglePlayingHandler()}>
                 pause/resume
-            </button> */}
+            </button>
             <GameMain debug={debug} highQuality={highQuality} />
         </div>
     );
