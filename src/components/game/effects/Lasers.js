@@ -40,13 +40,12 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
     }, [playing]);
 
     useEffect(() => {
-        if (audio) {
+        if (audio && playing) {
             const laserSound = getChoice(laserSounds);
             laserSound.isPlaying && laserSound.stop();
             laserSound.play();
         }
-        // eslint-disable-next-line
-    }, []);
+    }, [laserSounds, audio, playing]);
 
     useFrame((_, delta) => {
         if (playing && collider && laser && visible) {
@@ -77,19 +76,18 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
                             (colliderObject.name === 'starship' && name !== 'starship_laser') ||
                             colliderObject.name.startsWith('asteroid')
                         ) {
-                            highQuality &&
-                                explosionCallback({
-                                    position: [
-                                        laser.current.position.x,
-                                        laser.current.position.y,
-                                        laser.current.position.z,
-                                    ],
-                                    color: getChoice(explosionColorsArr),
-                                    count: 30,
-                                    size: 0.5,
-                                    fadeOutSpeed: 0.025,
-                                    spreadSpeed: 0.1,
-                                });
+                            explosionCallback({
+                                position: [
+                                    laser.current.position.x,
+                                    laser.current.position.y,
+                                    laser.current.position.z,
+                                ],
+                                color: getChoice(explosionColorsArr),
+                                count: 30,
+                                size: 0.5,
+                                fadeOutSpeed: 0.025,
+                                spreadSpeed: 0.1,
+                            });
                             setVisible(false);
                         }
                     }}

@@ -109,15 +109,14 @@ const Asteroid = ({ explosionCallback, uuid, dimension, highQuality, ...props })
             }
             hitAsteroid({ uuid });
             const currentPosition = asteroidBody.current.translation();
-            highQuality &&
-                explosionCallback({
-                    position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
-                    color: getChoice(explosionColorsArr),
-                    count: 300 / sizeCoeff,
-                    size: 0.7,
-                    fadeOutSpeed: 0.005,
-                    spreadSpeed: 0.3 / sizeCoeff,
-                });
+            explosionCallback({
+                position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
+                color: getChoice(explosionColorsArr),
+                count: 300 / sizeCoeff,
+                size: 0.7,
+                fadeOutSpeed: 0.005,
+                spreadSpeed: 0.3 / sizeCoeff,
+            });
             if (audio) {
                 stoneImpactDefaultSound.isPlaying && stoneImpactDefaultSound.stop();
                 stoneImpactDefaultSound.play();

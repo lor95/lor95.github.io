@@ -6,7 +6,7 @@ import { MathUtils } from 'three';
 import { useAudio, useExplosion, usePlay } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
 
-export const Explosions = ({ explosionSounds }) => {
+export const Explosions = ({ explosionSounds, highQuality }) => {
     const { explosion } = useExplosion();
     return explosion.map((props, index) => (
         <Explosion
@@ -18,15 +18,16 @@ export const Explosions = ({ explosionSounds }) => {
             spreadSpeed={props.spreadSpeed}
             fadeOutSpeed={props.fadeOutSpeed}
             explosionSounds={explosionSounds}
+            highQuality={highQuality}
         />
     ));
 };
 
-const Explosion = ({ position, count, color, size, spreadSpeed, fadeOutSpeed, explosionSounds }) => {
+const Explosion = ({ position, count, color, size, spreadSpeed, fadeOutSpeed, explosionSounds, highQuality }) => {
     const points = useRef();
     useBVH(points);
     const visiblePoints = useRef();
-    const [visible, setVisible] = useState(true);
+    const [visible, setVisible] = useState(highQuality ? true : false);
 
     const { playing } = usePlay();
     const { audio } = useAudio();
@@ -49,13 +50,12 @@ const Explosion = ({ position, count, color, size, spreadSpeed, fadeOutSpeed, ex
     }, [count]);
 
     useEffect(() => {
-        if (audio) {
+        if (audio && playing) {
             const explosionSound = getChoice(explosionSounds);
             explosionSound.isPlaying && explosionSound.stop();
             explosionSound.play();
         }
-        // eslint-disable-next-line
-    }, []);
+    }, [explosionSounds, audio, playing]);
 
     useFrame(({ clock }) => {
         if (visible && playing) {

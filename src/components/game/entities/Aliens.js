@@ -139,15 +139,14 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
                             hitAlien({ uuid });
                             if (health === 1) {
                                 const currentPosition = alienBody.current.translation();
-                                highQuality &&
-                                    explosionCallback({
-                                        position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
-                                        color: getChoice(explosionColorsArr),
-                                        count: 300,
-                                        size: 0.7,
-                                        fadeOutSpeed: 0.005,
-                                        spreadSpeed: 0.4,
-                                    });
+                                explosionCallback({
+                                    position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
+                                    color: getChoice(explosionColorsArr),
+                                    count: 300,
+                                    size: 0.7,
+                                    fadeOutSpeed: 0.005,
+                                    spreadSpeed: 0.4,
+                                });
                                 // removeAlien();
                             }
                         }
