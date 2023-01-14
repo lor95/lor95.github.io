@@ -9,7 +9,6 @@ import { getChoice } from '../helpers/getRandomValues';
 
 export const Lasers = ({ highQuality, laserSounds, explosionCallback }) => {
     const { laser } = useLaser();
-    console.log('ciao');
     return laser.map((props, index) => (
         <Laser
             key={index}
