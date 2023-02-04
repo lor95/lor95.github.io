@@ -7,3 +7,11 @@ body {
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden;
 }
+@font-face {
+    font-family: SpaceExplorer;
+    src: url(../public/fonts/space_explorer.ttf);
+}
+@font-face {
+    font-family: VoyagerLight;
+    src: url(../public/fonts/voyager_light.woff);
+}

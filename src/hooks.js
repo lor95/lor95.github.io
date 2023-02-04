@@ -3,7 +3,7 @@ import create from 'zustand';
 import { defaultController } from './constants';
 
 export const usePlay = create((set) => ({
-    playing: true,
+    playing: false,
     togglePlaying: () => set((state) => ({ playing: !state.playing })),
 }));
 

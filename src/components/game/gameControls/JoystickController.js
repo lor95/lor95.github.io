@@ -86,6 +86,7 @@ export const JoystickController = () => {
                     position: 'absolute',
                     bottom: 30,
                     right: 30,
+                    zIndex: 2,
                 }}
                 options={{
                     mode: 'static',
