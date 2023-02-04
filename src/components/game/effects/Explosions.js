@@ -98,7 +98,7 @@ const Explosion = ({ position, count, color, size, spreadSpeed, fadeOutSpeed, ex
                     opacity={1}
                     transparent
                     sizeAttenuation
-                    depthWrite={false}
+                    depthWrite={true}
                 />
             </points>
         )

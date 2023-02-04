@@ -1,8 +1,8 @@
 import { BakeShadows, Preload, useTexture } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { EffectComposer, Outline } from '@react-three/postprocessing';
 import { CuboidCollider, RigidBody } from '@react-three/rapier';
-import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
+import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Frustum, Matrix4, Vector3 } from 'three';
 import { generateUUID } from 'three/src/math/MathUtils';
 
@@ -18,6 +18,25 @@ import { Starship } from './entities/Starship';
 import { getChoice, getRandomInRange, getSpawnCoords } from './helpers/getRandomValues';
 
 const { innerWidth: width, innerHeight: height } = window;
+
+const FrameStabilizer = () => {
+    const { set, get } = useThree();
+    useLayoutEffect(() => {
+        const initFrameloop = get().frameloop;
+        return () => {
+            set({ frameloop: initFrameloop });
+        };
+        // eslint-disable-next-line
+    }, []);
+    useFrame((state) => {
+        if (state.get().blocked) return;
+        state.set({ blocked: true });
+        setTimeout(() => {
+            state.set({ blocked: false });
+            state.advance();
+        }, 0);
+    });
+};
 
 export const Space = (props) => {
     let textureFile;
@@ -137,21 +156,15 @@ export const Space = (props) => {
     );
 
     const laserComponents = useMemo(
-        () => (
-            <Lasers
-                highQuality={props.highQuality}
-                explosionCallback={createExplosion}
-                laserSounds={[laserDefaultSound]}
-            />
-        ),
-        [createExplosion, props.highQuality]
+        () => <Lasers explosionCallback={createExplosion} laserSounds={[laserDefaultSound]} />,
+        [createExplosion]
     );
 
     const spawnAlienLoop = (time) => {
         playing &&
             setTimeout(() => {
                 spawnAlien();
-                spawnAlienLoop(getRandomInRange(9000, 35000));
+                spawnAlienLoop(getRandomInRange(14000, 55000));
             }, time);
     };
 
@@ -159,7 +172,7 @@ export const Space = (props) => {
         playing &&
             setTimeout(() => {
                 spawnAsteroid();
-                spawnAsteroidLoop(getRandomInRange(2000, 6000));
+                spawnAsteroidLoop(getRandomInRange(5000, 8000));
             }, time);
     };
 
@@ -202,10 +215,17 @@ export const Space = (props) => {
 
     return (
         <Suspense fallback={null}>
+            <FrameStabilizer />
             <Preload all />
             <BakeShadows />
-            {Object.keys(highlight).some((planetName) => highlight[planetName]) && (
-                <EffectComposer autoClear={false} multisampling={0} stencilBuffer={false}>
+            <EffectComposer
+                autoClear={false}
+                multisampling={0}
+                stencilBuffer={false}
+                depthBuffer={true}
+                disableNormalPass={false}
+            >
+                {Object.keys(highlight).some((planetName) => highlight[planetName]) && (
                     <Outline
                         xRay
                         selection={
@@ -215,8 +235,8 @@ export const Space = (props) => {
                         edgeStrength={140}
                         blur
                     />
-                </EffectComposer>
-            )}
+                )}
+            </EffectComposer>
             {/* Background */}
             <primitive attach="background" object={texture} />
             <RigidBody friction={playing ? 0 : 100} type="fixed" position-y={-1} rotation={[-Math.PI / 2, 0, 0]}>

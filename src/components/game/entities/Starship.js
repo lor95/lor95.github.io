@@ -10,6 +10,8 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { starshipFireRate } from '../../../constants';
 import { useJoystickControls, usePlay } from '../../../hooks';
 
+let canFire = true;
+
 export const Starship = ({ highQuality, ...props }) => {
     let starship;
     const materials = useLoader(MTLLoader, 'models/starship.mtl');
@@ -24,7 +26,6 @@ export const Starship = ({ highQuality, ...props }) => {
     const { playing } = usePlay();
 
     const defaultVector = new Vector3();
-    let canFire = true;
 
     const mainQuaternion = new Quaternion();
     mainQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), 0);

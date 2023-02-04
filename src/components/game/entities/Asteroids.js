@@ -114,7 +114,7 @@ const Asteroid = ({ explosionCallback, uuid, dimension, highQuality, ...props })
                 color: getChoice(explosionColorsArr),
                 count: 300 / sizeCoeff,
                 size: 0.7,
-                fadeOutSpeed: 0.005,
+                fadeOutSpeed: 0.003,
                 spreadSpeed: 0.3 / sizeCoeff,
             });
             if (audio) {

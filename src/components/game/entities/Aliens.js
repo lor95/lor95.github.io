@@ -34,12 +34,11 @@ export const Aliens = ({ starshipBody, explosionCallback, laserCallback, highQua
             starshipBody={starshipBody}
             health={props.health}
             coords={props.coords}
-            highQuality={highQuality}
         />
     ));
 };
 
-const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, laserCallback, highQuality }) => {
+const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, laserCallback }) => {
     const alienBody = useRef();
 
     const mainQuaternion = new Quaternion();
@@ -142,10 +141,10 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
                                 explosionCallback({
                                     position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
                                     color: getChoice(explosionColorsArr),
-                                    count: 300,
+                                    count: 60,
                                     size: 0.7,
-                                    fadeOutSpeed: 0.005,
-                                    spreadSpeed: 0.4,
+                                    fadeOutSpeed: 0.003,
+                                    spreadSpeed: 0.2,
                                 });
                                 // removeAlien();
                             }

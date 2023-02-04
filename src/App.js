@@ -3,7 +3,7 @@ import { StyleSheet, css } from 'aphrodite';
 import { GameMain } from './components/game/GameMain';
 import { usePlay } from './hooks';
 
-const debug = true;
+const debug = false;
 const highQuality = true;
 
 const styles = StyleSheet.create({

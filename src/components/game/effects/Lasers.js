@@ -7,7 +7,7 @@ import { explosionColorsArr, laserDecayTime } from '../../../constants';
 import { useAudio, useLaser, usePlay } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
 
-export const Lasers = ({ highQuality, laserSounds, explosionCallback }) => {
+export const Lasers = ({ laserSounds, explosionCallback }) => {
     const { laser } = useLaser();
     return laser.map((props, index) => (
         <Laser
@@ -19,12 +19,11 @@ export const Lasers = ({ highQuality, laserSounds, explosionCallback }) => {
             direction={props.direction}
             explosionCallback={explosionCallback}
             laserSounds={laserSounds}
-            highQuality={highQuality}
         />
     ));
 };
 
-const Laser = ({ name, color, position, rotation, direction, explosionCallback, laserSounds, highQuality }) => {
+const Laser = ({ name, color, position, rotation, direction, explosionCallback, laserSounds }) => {
     const laser = useRef();
     const collider = useRef();
     useBVH(laser);
@@ -85,7 +84,7 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
                                 color: getChoice(explosionColorsArr),
                                 count: 30,
                                 size: 0.5,
-                                fadeOutSpeed: 0.025,
+                                fadeOutSpeed: 0.0095,
                                 spreadSpeed: 0.1,
                             });
                             setVisible(false);

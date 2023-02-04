@@ -10,7 +10,7 @@ import { CenterReferral } from './gameControls/CenterReferral';
 import { JoystickController } from './gameControls/JoystickController';
 
 export const GameMain = ({ debug, highQuality }) => {
-    const [dpr, setDpr] = useState(highQuality ? 0.8 : 0.5);
+    const [dpr, setDpr] = useState(0.6);
     return (
         <>
             <ButtonContainer />
@@ -25,11 +25,8 @@ export const GameMain = ({ debug, highQuality }) => {
                     { name: 'fire', keys: ['Space'] },
                 ]}
             >
-                <Canvas linear flat resize={{ scroll: false }} dpr={dpr}>
-                    <PerformanceMonitor
-                        onIncline={() => setDpr(highQuality ? 0.9 : 0.8)}
-                        onDecline={() => setDpr(highQuality ? 0.7 : 0.4)}
-                    />
+                <Canvas linear flat resize={{ scroll: false }} dpr={dpr} frameloop="demand">
+                    <PerformanceMonitor onIncline={() => setDpr(0.65)} onDecline={() => setDpr(0.5)} />
                     <AdaptiveDpr pixelated />
                     <AdaptiveEvents />
                     <Physics colliders={false} gravity={[0, -40, 0]}>
