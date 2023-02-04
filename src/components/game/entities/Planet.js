@@ -22,10 +22,10 @@ export const Planet = (props) => {
     base.repeat.set(1, 1);
     useBVH(base);
 
-    useFrame(() => {
+    useFrame((_, delta) => {
         if (playing && props.planet.current) {
-            props.planet.current.rotation.y += props.rotationY;
-            props.planet.current.rotation.z += props.rotationZ;
+            props.planet.current.rotation.y += props.rotationY * delta;
+            props.planet.current.rotation.z += props.rotationZ * delta;
         }
     });
 

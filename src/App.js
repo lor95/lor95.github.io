@@ -1,10 +1,6 @@
 import { StyleSheet, css } from 'aphrodite';
 
-import { GameMain } from './components/game/GameMain';
-import GameStartModal from './components/modals/GameStartModal';
-
-const debug = false;
-const highQuality = true;
+import { GameScreen } from './components/GameScreen';
 
 const styles = StyleSheet.create({
     app: {
@@ -16,8 +12,7 @@ const styles = StyleSheet.create({
 function App() {
     return (
         <div className={css(styles.app)}>
-            <GameStartModal />
-            <GameMain debug={debug} highQuality={highQuality} />
+            <GameScreen />
         </div>
     );
 }

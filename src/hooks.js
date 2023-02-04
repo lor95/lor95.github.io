@@ -7,6 +7,11 @@ export const usePlay = create((set) => ({
     togglePlaying: () => set((state) => ({ playing: !state.playing })),
 }));
 
+export const useScore = create((set) => ({
+    score: 0,
+    addPoints: (points) => set((state) => ({ score: state.score + points })),
+}));
+
 export const useJoystickControls = create((set) => ({
     controller: defaultController,
     updateController: (props) => set((state) => ({ controller: { ...state.controller, ...props } })),

@@ -68,26 +68,26 @@ export const Starship = ({ highQuality, ...props }) => {
             const keyboardKeys = getKeys();
 
             if (keyboardKeys.forward || joystickKeys.forward) {
-                linvel.x += Math.abs(Math.cos(angle)) * dirVec.x * delta * 130;
-                linvel.z += Math.abs(Math.sin(angle)) * dirVec.z * delta * 130;
+                linvel.x += Math.abs(Math.cos(angle)) * dirVec.x * delta * 180;
+                linvel.z += Math.abs(Math.sin(angle)) * dirVec.z * delta * 180;
             }
             if (keyboardKeys.backward || joystickKeys.backward) {
-                linvel.x -= Math.abs(Math.cos(angle)) * dirVec.x * delta * 65;
-                linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * delta * 65;
+                linvel.x -= Math.abs(Math.cos(angle)) * dirVec.x * delta * 95;
+                linvel.z -= Math.abs(Math.sin(angle)) * dirVec.z * delta * 95;
             }
             if (keyboardKeys.left || joystickKeys.left) {
-                angvel += 0.65;
+                angvel += 85 * delta;
             }
             if (keyboardKeys.right || joystickKeys.right) {
-                angvel -= 0.65;
+                angvel -= 85 * delta;
             }
-            Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 20 &&
+            Math.sqrt(currentLinvel.x ** 2 + currentLinvel.z ** 2) < 16 &&
                 props.starshipBody.current.applyImpulse({
                     x: linvel.x,
                     y: 0,
                     z: linvel.z,
                 });
-            Math.abs(currentAngvel.y) < 4 &&
+            Math.abs(currentAngvel.y) < 3.5 &&
                 props.starshipBody.current.applyTorqueImpulse({
                     x: 0,
                     y: angvel,
@@ -116,7 +116,7 @@ export const Starship = ({ highQuality, ...props }) => {
     return (
         <RigidBody friction={0.1} ref={props.starshipBody}>
             <primitive
-                position={[0, 9, 0]}
+                position={[0.5, 9, 0]}
                 object={starship}
                 scale={0.6}
                 rotation={[0, -Math.PI / 2, 0]}

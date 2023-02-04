@@ -126,7 +126,7 @@ const Asteroid = ({ explosionCallback, uuid, dimension, highQuality, ...props })
 
     const rotation = useMemo(() => {
         return {
-            y: getRandomInRangeFloat(0, 2) * getRandomSign(),
+            y: getRandomInRangeFloat(0, 0.02) * getRandomSign(),
             z: getRandomInRangeFloat(0.0004, 0.015) * getRandomSign(),
         };
     }, []);

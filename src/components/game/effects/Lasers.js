@@ -4,7 +4,7 @@ import { CuboidCollider } from '@react-three/rapier';
 import { useEffect, useRef, useState } from 'react';
 
 import { explosionColorsArr, laserDecayTime } from '../../../constants';
-import { useAudio, useLaser, usePlay } from '../../../hooks';
+import { useAudio, useLaser, usePlay, useScore } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
 
 export const Lasers = ({ laserSounds, explosionCallback }) => {
@@ -31,6 +31,7 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
 
     const { playing } = usePlay();
     const { audio } = useAudio();
+    const { addPoints } = useScore();
 
     useEffect(() => {
         setTimeout(() => {
@@ -75,6 +76,15 @@ const Laser = ({ name, color, position, rotation, direction, explosionCallback, 
                             (colliderObject.name === 'starship' && name !== 'starship_laser') ||
                             colliderObject.name.startsWith('asteroid')
                         ) {
+                            let points = 0;
+                            if (name === 'starship_laser') {
+                                if (colliderObject.name.startsWith('asteroid')) {
+                                    points = 1;
+                                } else if (colliderObject.name === 'alien') {
+                                    points = 2;
+                                }
+                                addPoints(points);
+                            }
                             explosionCallback({
                                 position: [
                                     laser.current.position.x,

@@ -12,7 +12,7 @@ export const explosionColorsArr = [
     '#d8d8d8',
     '#ececec',
 ];
-export const laserDecayTime = 2500; // ms
+export const laserDecayTime = 2000; // ms
 export const starshipFireRate = 250; // ms
 export const alienHealth = 2;
 export const alienFireRate = 1300; // ms

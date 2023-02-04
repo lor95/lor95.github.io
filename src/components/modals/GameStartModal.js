@@ -34,11 +34,11 @@ const styles = StyleSheet.create({
         zIndex: 3,
     },
     gameModalTitle: {
-        fontFamily: 'SpaceExplorer',
+        fontFamily: 'SpaceExplorer, sans-serif',
         textAlign: 'center',
     },
     gameModalContent: {
-        fontFamily: 'VoyagerLight',
+        fontFamily: 'VoyagerLight, sans-serif',
         fontSize: '14px',
         display: 'flex',
         flexFlow: 'row wrap',
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         background: '#090909',
         border: '2px solid #ffd700',
+        borderRadius: 2,
         display: 'inline-block',
         margin: '2px',
     },
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         cursor: 'pointer',
         display: 'inline-block',
-        fontFamily: 'SpaceExplorer',
+        fontFamily: 'SpaceExplorer, sans-serif',
         fontSize: '22px',
         outline: 0,
         padding: '0.3em 1.5em',
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
 
 Modal.setAppElement('#root');
 
-const GameStartModal = () => {
+export const GameStartModal = () => {
     const mediaMatch = window.matchMedia('(max-width: 1150px)');
     const [matches, setMatches] = useState(mediaMatch.matches);
     const [visible, setVisible] = useState(true);
@@ -156,7 +157,7 @@ const GameStartModal = () => {
                         textAlign: 'center',
                     }}
                 >
-                    Use arrow keys to move in a zero-gravity environment.
+                    Use the arrow keys to move in a zero-gravity environment.
                 </div>
             </div>
             <div className={css(styles.gameModalContent)} style={{ marginTop: 15 }}>
@@ -206,5 +207,3 @@ const GameStartModal = () => {
         </Modal>
     );
 };
-
-export default GameStartModal;
