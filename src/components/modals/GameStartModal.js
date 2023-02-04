@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
 
 Modal.setAppElement('#root');
 
-function GameStartModal() {
+const GameStartModal = () => {
     const mediaMatch = window.matchMedia('(max-width: 1150px)');
     const [matches, setMatches] = useState(mediaMatch.matches);
     const [visible, setVisible] = useState(true);
@@ -205,6 +205,6 @@ function GameStartModal() {
             </div>
         </Modal>
     );
-}
+};
 
 export default GameStartModal;
