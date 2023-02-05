@@ -164,7 +164,7 @@ export const Space = (props) => {
         playing &&
             setTimeout(() => {
                 spawnAlien();
-                spawnAlienLoop(getRandomInRange(14000, 55000));
+                spawnAlienLoop(getRandomInRange(20000, 28000));
             }, time);
     };
 
@@ -172,7 +172,7 @@ export const Space = (props) => {
         playing &&
             setTimeout(() => {
                 spawnAsteroid();
-                spawnAsteroidLoop(getRandomInRange(5000, 8000));
+                spawnAsteroidLoop(getRandomInRange(900, 3500));
             }, time);
     };
 
@@ -187,8 +187,8 @@ export const Space = (props) => {
                     })
                     .reduce((r, c) => Object.assign(r, c), {})
             );
-            spawnAsteroidLoop(getRandomInRange(2000, 4500));
-            spawnAlienLoop(getRandomInRange(500, 1200));
+            spawnAsteroidLoop(getRandomInRange(2000, 6500));
+            spawnAlienLoop(getRandomInRange(900, 3500));
         }
         // eslint-disable-next-line
     }, [playing]);

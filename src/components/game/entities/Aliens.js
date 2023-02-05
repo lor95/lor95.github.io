@@ -8,7 +8,7 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { alienFireRate, explosionColorsArr } from '../../../constants';
-import { useAlien, usePlay } from '../../../hooks';
+import { useAlien, usePlay, useScore, useStarship } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
 
 export const Aliens = ({ starshipBody, explosionCallback, laserCallback, highQuality }) => {
@@ -47,6 +47,8 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
     refQuaternion.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
 
     const { hitAlien } = useAlien();
+    const { health: starshipHealth } = useStarship();
+    const { addPoints } = useScore();
     // const hitAlien = useCallback(() => {
     //     hitAlienCallback({ uuid });
     // }, [hitAlienCallback, uuid]);
@@ -90,7 +92,7 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
     }, [laserCallback, playing]);
 
     useFrame(() => {
-        if (playing && health > 0) {
+        if (playing && health > 0 && starshipHealth > 0) {
             const diffAngle = new Vector2(
                 starshipBody.current.translation().x - alienBody.current.translation().x,
                 starshipBody.current.translation().z - alienBody.current.translation().z
@@ -137,6 +139,7 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
                         if (colliderObject.name === 'starship_laser') {
                             hitAlien({ uuid });
                             if (health === 1) {
+                                addPoints(5);
                                 const currentPosition = alienBody.current.translation();
                                 explosionCallback({
                                     position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],

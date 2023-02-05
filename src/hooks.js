@@ -1,6 +1,6 @@
 import create from 'zustand';
 
-import { defaultController } from './constants';
+import { defaultController, starshipMaxHealth } from './constants';
 
 export const usePlay = create((set) => ({
     playing: false,
@@ -10,6 +10,14 @@ export const usePlay = create((set) => ({
 export const useScore = create((set) => ({
     score: 0,
     addPoints: (points) => set((state) => ({ score: state.score + points })),
+}));
+
+export const useStarship = create((set) => ({
+    health: starshipMaxHealth,
+    hitStarship: (damagePoints) =>
+        set((state) => ({
+            health: state.health - damagePoints,
+        })),
 }));
 
 export const useJoystickControls = create((set) => ({

@@ -4,18 +4,19 @@ import { Debug, Physics } from '@react-three/rapier';
 import { useState } from 'react';
 
 import { mobileOperatingSystem } from '../../constants';
-import { useScore } from '../../hooks';
 import { Space } from './Space';
-import { ButtonContainer } from './gameControls/ButtonContainer';
-import { CenterReferral } from './gameControls/CenterReferral';
-import { JoystickController } from './gameControls/JoystickController';
+import { ButtonContainer } from './hud/ButtonContainer';
+import { CenterReferral } from './hud/CenterReferral';
+import { HealthBar } from './hud/HealthBar';
+import { JoystickController } from './hud/JoystickController';
+import { ScoreDisplay } from './hud/ScoreDisplay';
 
 export const GameMain = ({ debug, highQuality, renderingEndCallback }) => {
     const [dpr, setDpr] = useState(0.75);
-    const { score } = useScore();
-    console.log(score);
     return (
         <>
+            <ScoreDisplay />
+            <HealthBar />
             <ButtonContainer />
             <CenterReferral />
             {(mobileOperatingSystem || debug) && <JoystickController />}

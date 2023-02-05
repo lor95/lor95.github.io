@@ -3,43 +3,12 @@ import { useEffect, useState } from 'react';
 import { TiArrowDownThick, TiArrowLeftThick, TiArrowRightThick, TiArrowUpThick } from 'react-icons/ti';
 import Modal from 'react-modal';
 
-import { usePlay } from '../../hooks';
+import { StandardModal } from './StandardModal';
 
 const styles = StyleSheet.create({
-    gameModal: {
-        position: 'absolute',
-        width: '50%',
-        maxWidth: '50%',
-        left: '50%',
-        top: '50%',
-        transform: 'translate(-50%, -50%)',
-        border: '2px solid 	#ffd700',
-        background: '#0f0f0f',
-        overflow: 'auto',
-        WebkitOverflowScrolling: 'touch',
-        outline: 'none',
-        padding: '20px',
-        color: '#ffd700',
-        userSelect: 'none',
-        zIndex: 3,
-        borderRadius: 6,
-    },
-    gameModalOverlay: {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.65)',
-        zIndex: 3,
-    },
-    gameModalTitle: {
-        fontFamily: 'SpaceExplorer, sans-serif',
-        textAlign: 'center',
-    },
     gameModalContent: {
         fontFamily: 'VoyagerLight, sans-serif',
-        fontSize: '14px',
+        fontSize: 14,
         display: 'flex',
         flexFlow: 'row wrap',
         alignItems: 'center',
@@ -55,7 +24,7 @@ const styles = StyleSheet.create({
         border: '2px solid #ffd700',
         borderRadius: 2,
         display: 'inline-block',
-        margin: '2px',
+        margin: 2,
     },
     startButton: {
         appearance: 'none',
@@ -65,7 +34,7 @@ const styles = StyleSheet.create({
         cursor: 'pointer',
         display: 'inline-block',
         fontFamily: 'SpaceExplorer, sans-serif',
-        fontSize: '22px',
+        fontSize: 22,
         outline: 0,
         padding: '0.3em 1.5em',
         position: 'relative',
@@ -80,8 +49,8 @@ const styles = StyleSheet.create({
             content: '""',
             height: '100%',
             left: 0,
-            position: 'absolute',
             top: 0,
+            position: 'absolute',
             transform: 'translateZ(0)',
             transition:
                 'clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1), -webkit-clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1)',
@@ -99,7 +68,7 @@ const styles = StyleSheet.create({
 
 Modal.setAppElement('#root');
 
-export const GameStartModal = () => {
+export const GameStartModal = ({ playingHandler }) => {
     const mediaMatch = window.matchMedia('(max-width: 1150px)');
     const [matches, setMatches] = useState(mediaMatch.matches);
     const [visible, setVisible] = useState(true);
@@ -110,18 +79,6 @@ export const GameStartModal = () => {
         });
     });
 
-    const { playing, togglePlaying } = usePlay();
-    // eslint-disable-next-line
-    const togglePlayingHandler = () => {
-        if (playing) {
-            const highestIntervalId = setInterval(() => {});
-            const highestTimeoutId = setTimeout(() => {});
-            for (let i = 0; i < highestIntervalId; i++) clearInterval(i);
-            for (let i = 0; i < highestTimeoutId; i++) clearTimeout(i);
-        }
-        togglePlaying();
-    };
-
     const arrowKeyStyle = {
         width: matches ? '20px' : '40px',
         height: matches ? '20px' : '40px',
@@ -130,8 +87,7 @@ export const GameStartModal = () => {
     };
 
     return (
-        <Modal isOpen={visible} className={css(styles.gameModal)} overlayClassName={css(styles.gameModalOverlay)}>
-            <h3 className={css(styles.gameModalTitle)}>Welcome to Lorenzo's Asteroids</h3>
+        <StandardModal visible={visible} title="Welcome to Lorenzo's asteroids">
             <div className={css(styles.gameModalContent)}>
                 <div style={{ width: matches ? '100%' : '35%' }}>
                     <div className={css(styles.arrowKeysContent)}>
@@ -191,7 +147,7 @@ export const GameStartModal = () => {
                     className={css(styles.startButton)}
                     onClick={() => {
                         setVisible(false);
-                        togglePlayingHandler();
+                        playingHandler();
                     }}
                 >
                     <span
@@ -204,6 +160,6 @@ export const GameStartModal = () => {
                     </span>
                 </button>
             </div>
-        </Modal>
+        </StandardModal>
     );
 };

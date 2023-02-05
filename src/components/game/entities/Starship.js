@@ -8,7 +8,7 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { starshipFireRate } from '../../../constants';
-import { useJoystickControls, usePlay } from '../../../hooks';
+import { useJoystickControls, usePlay, useStarship } from '../../../hooks';
 
 let canFire = true;
 
@@ -24,6 +24,7 @@ export const Starship = ({ highQuality, ...props }) => {
     useBVH(starship);
 
     const { playing } = usePlay();
+    const { health, hitStarship } = useStarship();
 
     const defaultVector = new Vector3();
 
@@ -44,7 +45,7 @@ export const Starship = ({ highQuality, ...props }) => {
     }, [camera]);
 
     useFrame(({ camera }, delta) => {
-        if (playing) {
+        if (playing && health > 0) {
             let angvel = 0;
             let linvel = { x: 0, z: 0 };
             const currentLinvel = props.starshipBody.current.linvel();
@@ -114,23 +115,27 @@ export const Starship = ({ highQuality, ...props }) => {
     });
 
     return (
-        <RigidBody friction={0.1} ref={props.starshipBody}>
-            <primitive
-                position={[0.5, 9, 0]}
-                object={starship}
-                scale={0.6}
-                rotation={[0, -Math.PI / 2, 0]}
-                castShadow
-                receiveShadow
-            />
-            <CuboidCollider
-                name="starship"
-                args={[2, 0.5, 1.5]}
-                position={[-1, 9, 0]}
-                onIntersectionEnter={({ colliderObject }) => {
-                    colliderObject.name !== 'starship_laser' && void 0;
-                }}
-            />
-        </RigidBody>
+        health > 0 && (
+            <RigidBody friction={0.1} ref={props.starshipBody}>
+                <primitive
+                    position={[0.5, 9, 0]}
+                    object={starship}
+                    scale={0.6}
+                    rotation={[0, -Math.PI / 2, 0]}
+                    castShadow
+                    receiveShadow
+                />
+                <CuboidCollider
+                    name="starship"
+                    args={[2, 0.5, 1.5]}
+                    position={[-1, 9, 0]}
+                    onIntersectionEnter={({ colliderObject }) => {
+                        if (colliderObject.name === 'alien_laser') {
+                            hitStarship(2.5);
+                        }
+                    }}
+                />
+            </RigidBody>
+        )
     );
 };

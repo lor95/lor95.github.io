@@ -14,8 +14,9 @@ export const explosionColorsArr = [
 ];
 export const laserDecayTime = 2000; // ms
 export const starshipFireRate = 250; // ms
+export const starshipMaxHealth = 35;
 export const alienHealth = 2;
-export const alienFireRate = 1300; // ms
+export const alienFireRate = 1400; // ms
 export const alienSpawnDistance = 140; // coord
 export const asteroidSpawnDistance = 100; // coord
 export const spaceDimensions = [5000, 5000, 9];
