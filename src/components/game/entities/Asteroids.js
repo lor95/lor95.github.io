@@ -6,7 +6,15 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
-import { explosionColorsArr } from '../../../constants';
+import {
+    explosionColorsArr,
+    lgAsteroidDamage,
+    lgAsteroidPoints,
+    mdAsteroidDamage,
+    mdAsteroidPoints,
+    smAsteroidDamage,
+    smAsteroidPoints,
+} from '../../../constants';
 import { useAsteroid, useAudio, usePlay, useScore, useStarship } from '../../../hooks';
 import { stoneImpactDefaultSound } from '../effects/Audio';
 import { getChoice, getRandomInRangeFloat, getRandomSign } from '../helpers/getRandomValues';
@@ -104,16 +112,16 @@ const Asteroid = ({ explosionCallback, uuid, dimension, highQuality, ...props })
             colliderObject.name.startsWith('planet')
         ) {
             let sizeCoeff = 3;
-            let points = 4;
-            let damage = 10;
+            let points = smAsteroidPoints;
+            let damage = smAsteroidDamage;
             if (dimension === 'md') {
                 sizeCoeff = 2;
-                points = 3;
-                damage = 18;
+                points = mdAsteroidPoints;
+                damage = mdAsteroidDamage;
             } else if (dimension === 'lg' || dimension === 'xl') {
                 sizeCoeff = 1;
-                points = 2;
-                damage = 25;
+                points = lgAsteroidPoints;
+                damage = lgAsteroidDamage;
             }
             if (colliderObject.name === 'starship_laser') {
                 addPoints(points);
@@ -126,8 +134,8 @@ const Asteroid = ({ explosionCallback, uuid, dimension, highQuality, ...props })
             explosionCallback({
                 position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
                 color: getChoice(explosionColorsArr),
-                count: 100 / sizeCoeff,
-                size: 0.7,
+                count: 120 / sizeCoeff,
+                size: 0.9,
                 fadeOutSpeed: 0.003,
                 spreadSpeed: 0.3 / sizeCoeff,
             });

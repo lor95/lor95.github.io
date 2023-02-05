@@ -7,7 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
-import { alienFireRate, explosionColorsArr } from '../../../constants';
+import { alienFireRate, alienPoints, explosionColorsArr, laserDamage } from '../../../constants';
 import { useAlien, usePlay, useScore, useStarship } from '../../../hooks';
 import { getChoice } from '../helpers/getRandomValues';
 
@@ -138,14 +138,14 @@ const Alien = ({ alien, uuid, health, coords, starshipBody, explosionCallback, l
                     onIntersectionEnter={({ colliderObject }) => {
                         if (colliderObject.name === 'starship_laser') {
                             hitAlien({ uuid });
-                            if (health === 1) {
-                                addPoints(5);
+                            if (health === laserDamage) {
+                                addPoints(alienPoints);
                                 const currentPosition = alienBody.current.translation();
                                 explosionCallback({
                                     position: [currentPosition.x, currentPosition.y + 9, currentPosition.z],
                                     color: getChoice(explosionColorsArr),
-                                    count: 60,
-                                    size: 0.7,
+                                    count: 70,
+                                    size: 0.9,
                                     fadeOutSpeed: 0.003,
                                     spreadSpeed: 0.2,
                                 });

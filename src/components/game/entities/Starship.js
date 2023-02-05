@@ -7,7 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
-import { starshipFireRate } from '../../../constants';
+import { laserDamage, starshipFireRate } from '../../../constants';
 import { useJoystickControls, usePlay, useStarship } from '../../../hooks';
 
 let canFire = true;
@@ -131,7 +131,7 @@ export const Starship = ({ highQuality, ...props }) => {
                     position={[-1, 9, 0]}
                     onIntersectionEnter={({ colliderObject }) => {
                         if (colliderObject.name === 'alien_laser') {
-                            hitStarship(2.5);
+                            hitStarship(laserDamage);
                         }
                     }}
                 />

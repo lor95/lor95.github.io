@@ -1,6 +1,7 @@
+import { generateUUID } from 'three/src/math/MathUtils';
 import create from 'zustand';
 
-import { defaultController, starshipMaxHealth } from './constants';
+import { alienHealth, asteroidHealth, defaultController, laserDamage, starshipMaxHealth } from './constants';
 
 export const usePlay = create((set) => ({
     playing: false,
@@ -13,7 +14,7 @@ export const useScore = create((set) => ({
 }));
 
 export const useStarship = create((set) => ({
-    health: starshipMaxHealth,
+    health: starshipMaxHealth * laserDamage,
     hitStarship: (damagePoints) =>
         set((state) => ({
             health: state.health - damagePoints,
@@ -42,12 +43,15 @@ export const useLaser = create((set) => ({
 
 export const useAlien = create((set) => ({
     alien: [],
-    addAlien: (props) => set((state) => ({ alien: [...state.alien, props] })),
+    addAlien: (props) =>
+        set((state) => ({
+            alien: [...state.alien, { uuid: generateUUID(), health: alienHealth * laserDamage, ...props }],
+        })),
     hitAlien: ({ uuid }) =>
         set((state) => ({
             alien: [...state.alien].map((alien) => {
                 if (alien.uuid === uuid) {
-                    alien.health = alien.health - 1;
+                    alien.health = alien.health - laserDamage;
                 }
                 return alien;
             }),
@@ -57,12 +61,15 @@ export const useAlien = create((set) => ({
 
 export const useAsteroid = create((set) => ({
     asteroid: [],
-    addAsteroid: (props) => set((state) => ({ asteroid: [...state.asteroid, props] })),
+    addAsteroid: (props) =>
+        set((state) => ({
+            asteroid: [...state.asteroid, { uuid: generateUUID(), health: asteroidHealth * laserDamage, ...props }],
+        })),
     hitAsteroid: ({ uuid }) =>
         set((state) => ({
             asteroid: [...state.asteroid].map((asteroid) => {
                 if (asteroid.uuid === uuid) {
-                    asteroid.health = asteroid.health - 1;
+                    asteroid.health = asteroid.health - laserDamage;
                 }
                 return asteroid;
             }),

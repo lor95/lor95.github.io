@@ -1,6 +1,6 @@
 import { StyleSheet, css } from 'aphrodite';
 
-import { starshipMaxHealth } from '../../../constants';
+import { laserDamage, starshipMaxHealth } from '../../../constants';
 import { useStarship } from '../../../hooks';
 
 const styles = StyleSheet.create({
@@ -45,9 +45,15 @@ export const HealthBar = () => {
     return (
         <div className={css(styles.healthBar)}>
             <div className={css(styles.hitContainer)}>
-                <div className={css(styles.hit)} style={{ width: `${100 * (health / starshipMaxHealth)}%` }}></div>
+                <div
+                    className={css(styles.hit)}
+                    style={{ width: `${100 * (health / (starshipMaxHealth * laserDamage))}%` }}
+                ></div>
             </div>
-            <div className={css(styles.bar)} style={{ width: `${100 * (health / starshipMaxHealth)}%` }}></div>
+            <div
+                className={css(styles.bar)}
+                style={{ width: `${100 * (health / (starshipMaxHealth * laserDamage))}%` }}
+            ></div>
         </div>
     );
 };

@@ -12,9 +12,22 @@ export const explosionColorsArr = [
     '#d8d8d8',
     '#ececec',
 ];
+/* damages */
+export const laserDamage = 2.5;
+export const smAsteroidDamage = 10;
+export const mdAsteroidDamage = 18;
+export const lgAsteroidDamage = 25;
+
+/* points */
+export const alienPoints = 4;
+export const smAsteroidPoints = 4;
+export const mdAsteroidPoints = 2;
+export const lgAsteroidPoints = 1;
+
 export const laserDecayTime = 2000; // ms
 export const starshipFireRate = 250; // ms
-export const starshipMaxHealth = 35;
+export const starshipMaxHealth = 15;
+export const asteroidHealth = 1;
 export const alienHealth = 2;
 export const alienFireRate = 1400; // ms
 export const alienSpawnDistance = 140; // coord

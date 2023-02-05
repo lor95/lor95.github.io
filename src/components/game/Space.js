@@ -6,7 +6,7 @@ import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef } fr
 import { Frustum, Matrix4, Vector3 } from 'three';
 import { generateUUID } from 'three/src/math/MathUtils';
 
-import { alienHealth, centerReferralDimension, spaceDimensions } from '../../constants';
+import { centerReferralDimension, spaceDimensions } from '../../constants';
 import { useAlien, useAsteroid, useExplosion, useLaser, usePlanet, usePlay, useReferral } from '../../hooks';
 import { explosionDefaultSound, laserDefaultSound } from './effects/Audio';
 import { Explosions } from './effects/Explosions';
@@ -75,8 +75,6 @@ export const Space = (props) => {
     const { addAsteroid } = useAsteroid();
     const spawnAsteroid = useCallback(() => {
         addAsteroid({
-            uuid: generateUUID(),
-            health: 1,
             asteroidKey: getChoice(['asteroid1', 'asteroid2']),
             dimension: getChoice(['xs', 'sm', 'md', 'lg', 'xl']),
             coords: getSpawnCoords('asteroid'),
@@ -85,7 +83,7 @@ export const Space = (props) => {
 
     const addAlien = useAlien((state) => state.addAlien);
     const spawnAlien = useCallback(() => {
-        addAlien({ uuid: generateUUID(), coords: getSpawnCoords('alien'), health: alienHealth });
+        addAlien({ coords: getSpawnCoords('alien') });
     }, [addAlien]);
     const { playing } = usePlay();
 
