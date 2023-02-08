@@ -17,7 +17,7 @@ export const useStarship = create((set) => ({
     health: starshipMaxHealth * laserDamage,
     hitStarship: (damagePoints) =>
         set((state) => ({
-            health: state.health - damagePoints,
+            health: state.health - damagePoints > 0 ? state.health - damagePoints : 0,
         })),
 }));
 

@@ -24,11 +24,11 @@ export const GameScreen = () => {
     };
 
     useEffect(() => {
-        starshipHealth <= 0 &&
+        starshipHealth === 0 &&
             setTimeout(() => {
                 togglePlayingHandler();
                 showGameOver(true);
-            }, 1000);
+            }, 1500);
         // eslint-disable-next-line
     }, [starshipHealth]);
 
