@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { TiArrowDownThick, TiArrowLeftThick, TiArrowRightThick, TiArrowUpThick } from 'react-icons/ti';
 import Modal from 'react-modal';
 
-import { StandardModal } from './StandardModal';
+import { StandardModal, commonStyles } from './StandardModal';
 
 const styles = StyleSheet.create({
     gameModalContent: {
@@ -25,44 +25,6 @@ const styles = StyleSheet.create({
         borderRadius: 2,
         display: 'inline-block',
         margin: 2,
-    },
-    startButton: {
-        appearance: 'none',
-        backgroundColor: '#0f0f0f',
-        color: '#ffd700',
-        borderWidth: 0,
-        cursor: 'pointer',
-        display: 'inline-block',
-        fontFamily: 'SpaceExplorer, sans-serif',
-        fontSize: 22,
-        outline: 0,
-        padding: '0.3em 1.5em',
-        position: 'relative',
-        textAlign: 'center',
-        transition:
-            'opacity 300ms cubic-bezier(.694, 0, 0.335, 1), background-color 100ms cubic-bezier(.694, 0, 0.335, 1), color 90ms cubic-bezier(.694, 0, 0.335, 1)',
-        ':before': {
-            animation: 'opacityFallbackOut .5s step-end forwards',
-            backfaceVisibility: 'hidden',
-            backgroundColor: '#ffd700',
-            clipPath: 'polygon(-1% 0, 0 0, -25% 100%, -1% 100%)',
-            content: '""',
-            height: '100%',
-            left: 0,
-            top: 0,
-            position: 'absolute',
-            transform: 'translateZ(0)',
-            transition:
-                'clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1), -webkit-clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1)',
-            width: '100%',
-        },
-        ':hover': {
-            color: '#090909',
-        },
-        ':hover:before': {
-            animation: 'opacityFallbackIn 0s step-start forwards',
-            clipPath: 'polygon(0 0, 101% 0, 101% 101%, 0 101%)',
-        },
     },
 });
 
@@ -144,7 +106,7 @@ export const GameStartModal = ({ playingHandler }) => {
             </div>
             <div style={{ textAlign: 'center', marginTop: '15px', marginBottom: '15px' }}>
                 <button
-                    className={css(styles.startButton)}
+                    className={css(commonStyles.defaultButton)}
                     onClick={() => {
                         setVisible(false);
                         playingHandler();
