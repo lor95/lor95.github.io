@@ -1,9 +1,9 @@
-import { StyleSheet, css } from 'aphrodite';
+import { createStyles } from '@mantine/core';
 import { FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 
 import { useAudio } from '../../../hooks';
 
-const styles = StyleSheet.create({
+const useStyles = createStyles(() => ({
     button: {
         display: 'flex',
         cursor: 'pointer',
@@ -16,14 +16,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 6,
     },
-});
+}));
 
 export const VolumeButton = () => {
     const { audio, toggleAudio } = useAudio();
+    const { classes } = useStyles();
 
     return (
         <div
-            className={css(styles.button)}
+            className={classes.button}
             onClick={() => {
                 toggleAudio(!audio);
             }}

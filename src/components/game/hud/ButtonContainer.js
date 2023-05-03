@@ -1,8 +1,8 @@
-import { StyleSheet, css } from 'aphrodite';
+import { createStyles } from '@mantine/core';
 
 import { VolumeButton } from './VolumeButton';
 
-const styles = StyleSheet.create({
+const useStyles = createStyles(() => ({
     buttonContainer: {
         position: 'absolute',
         display: 'flex',
@@ -14,11 +14,12 @@ const styles = StyleSheet.create({
         gap: 10,
         zIndex: 2,
     },
-});
+}));
 
 export const ButtonContainer = () => {
+    const { classes } = useStyles();
     return (
-        <div className={css(styles.buttonContainer)}>
+        <div className={classes.buttonContainer}>
             <VolumeButton />
         </div>
     );

@@ -1,19 +1,16 @@
-import { StyleSheet, css } from 'aphrodite';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { GameScreen } from './components/GameScreen';
-
-const styles = StyleSheet.create({
-    app: {
-        height: '100vh',
-        width: '100vw',
-    },
-});
+import { MainScreen } from './components/MainScreen';
 
 function App() {
     return (
-        <div className={css(styles.app)}>
-            <GameScreen />
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<MainScreen />} />
+                <Route path="/asteroids" element={<GameScreen />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 

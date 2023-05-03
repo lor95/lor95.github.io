@@ -1,11 +1,11 @@
-import { StyleSheet, css } from 'aphrodite';
+import { createStyles } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { TiArrowDownThick, TiArrowLeftThick, TiArrowRightThick, TiArrowUpThick } from 'react-icons/ti';
 import Modal from 'react-modal';
 
-import { StandardModal, commonStyles } from './StandardModal';
+import { StandardModal, useCommonStyles } from './StandardModal';
 
-const styles = StyleSheet.create({
+const useStyles = createStyles(() => ({
     gameModalContent: {
         fontFamily: 'VoyagerLight, sans-serif',
         fontSize: 14,
@@ -26,11 +26,13 @@ const styles = StyleSheet.create({
         display: 'inline-block',
         margin: 2,
     },
-});
+}));
 
 Modal.setAppElement('#root');
 
 export const GameStartModal = ({ playingHandler }) => {
+    const { classes } = useStyles();
+    const { classes: commonClasses } = useCommonStyles();
     const mediaMatch = window.matchMedia('(max-width: 1150px)');
     const [matches, setMatches] = useState(mediaMatch.matches);
     const [visible, setVisible] = useState(true);
@@ -50,20 +52,20 @@ export const GameStartModal = ({ playingHandler }) => {
 
     return (
         <StandardModal visible={visible} title="Welcome to Lorenzo's asteroids">
-            <div className={css(styles.gameModalContent)}>
+            <div className={classes.gameModalContent}>
                 <div style={{ width: matches ? '100%' : '35%' }}>
-                    <div className={css(styles.arrowKeysContent)}>
-                        <div style={arrowKeyStyle} className={css(styles.key)}>
+                    <div className={classes.arrowKeysContent}>
+                        <div style={arrowKeyStyle} className={classes.key}>
                             <TiArrowUpThick />
                         </div>
                         <br />
-                        <div style={arrowKeyStyle} className={css(styles.key)}>
+                        <div style={arrowKeyStyle} className={classes.key}>
                             <TiArrowLeftThick />
                         </div>
-                        <div style={arrowKeyStyle} className={css(styles.key)}>
+                        <div style={arrowKeyStyle} className={classes.key}>
                             <TiArrowDownThick />
                         </div>
-                        <div style={arrowKeyStyle} className={css(styles.key)}>
+                        <div style={arrowKeyStyle} className={classes.key}>
                             <TiArrowRightThick />
                         </div>
                     </div>
@@ -78,9 +80,9 @@ export const GameStartModal = ({ playingHandler }) => {
                     Use the arrow keys to move in a zero-gravity environment.
                 </div>
             </div>
-            <div className={css(styles.gameModalContent)} style={{ marginTop: 15 }}>
+            <div className={classes.gameModalContent} style={{ marginTop: 15 }}>
                 <div style={{ width: matches ? '100%' : '35%' }}>
-                    <div className={css(styles.arrowKeysContent)}>
+                    <div className={classes.arrowKeysContent}>
                         <div
                             style={{
                                 width: matches ? '150px' : '200px',
@@ -88,7 +90,7 @@ export const GameStartModal = ({ playingHandler }) => {
                                 fontSize: matches ? '10px' : '14px',
                                 lineHeight: matches ? '20px' : '40px',
                             }}
-                            className={css(styles.key)}
+                            className={classes.key}
                         >
                             Spacebar
                         </div>
@@ -106,7 +108,7 @@ export const GameStartModal = ({ playingHandler }) => {
             </div>
             <div style={{ textAlign: 'center', marginTop: '15px', marginBottom: '15px' }}>
                 <button
-                    className={css(commonStyles.defaultButton)}
+                    className={commonClasses.defaultButton}
                     onClick={() => {
                         setVisible(false);
                         playingHandler();

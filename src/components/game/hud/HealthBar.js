@@ -1,9 +1,9 @@
-import { StyleSheet, css } from 'aphrodite';
+import { createStyles } from '@mantine/core';
 
 import { laserDamage, starshipMaxHealth } from '../../../constants';
 import { useStarship } from '../../../hooks';
 
-const styles = StyleSheet.create({
+const useStyles = createStyles(() => ({
     healthBar: {
         boxSizing: 'border-box',
         width: '50%',
@@ -38,20 +38,21 @@ const styles = StyleSheet.create({
         bottom: 0,
         transition: 'width 1s linear',
     },
-});
+}));
 
 export const HealthBar = () => {
     const { health } = useStarship();
+    const { classes } = useStyles();
     return (
-        <div className={css(styles.healthBar)}>
-            <div className={css(styles.hitContainer)}>
+        <div className={classes.healthBar}>
+            <div className={classes.hitContainer}>
                 <div
-                    className={css(styles.hit)}
+                    className={classes.hit}
                     style={{ width: `${100 * (health / (starshipMaxHealth * laserDamage))}%` }}
                 ></div>
             </div>
             <div
-                className={css(styles.bar)}
+                className={classes.bar}
                 style={{ width: `${100 * (health / (starshipMaxHealth * laserDamage))}%` }}
             ></div>
         </div>

@@ -1,8 +1,8 @@
-import { StyleSheet, css } from 'aphrodite';
+import { createStyles } from '@mantine/core';
 
 import { useScore } from '../../../hooks';
 
-const styles = StyleSheet.create({
+const useStyles = createStyles(() => ({
     scoreDisplayContainer: {
         position: 'absolute',
         fontFamily: 'SpaceExplorer, sans-serif',
@@ -24,14 +24,15 @@ const styles = StyleSheet.create({
         fontSize: 30,
         lineHeight: 0.9,
     },
-});
+}));
 
 export const ScoreDisplay = () => {
     const { score } = useScore();
+    const { classes } = useStyles();
     return score > 0 ? (
-        <div className={css(styles.scoreDisplayContainer)}>
-            <span className={css(styles.scoreSpan)}>Score:</span>
-            <span className={`${css(styles.scoreSpan)} ${css(styles.scoreDisplay)}`}>{score}</span>
+        <div className={classes.scoreDisplayContainer}>
+            <span className={classes.scoreSpan}>Score:</span>
+            <span className={`${classes.scoreSpan} ${classes.scoreDisplay}`}>{score}</span>
         </div>
     ) : (
         <></>

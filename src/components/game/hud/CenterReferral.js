@@ -1,10 +1,10 @@
-import { StyleSheet, css } from 'aphrodite';
+import { createStyles } from '@mantine/core';
 import { SiTarget } from 'react-icons/si';
 
 import { centerReferralDimension } from '../../../constants';
 import { useReferral } from '../../../hooks';
 
-const styles = StyleSheet.create({
+const useStyles = createStyles(() => ({
     referralContainer: {
         position: 'absolute',
         display: 'flex',
@@ -22,15 +22,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-});
+}));
 
 export const CenterReferral = () => {
     const { referral } = useReferral();
+    const { classes } = useStyles();
     return (
         referral.x >= 0 &&
         referral.y >= 0 && (
-            <div style={{ left: referral.x, top: referral.y }} className={css(styles.referralContainer)}>
-                <div className={css(styles.referral)}>
+            <div style={{ left: referral.x, top: referral.y }} className={classes.referralContainer}>
+                <div className={classes.referral}>
                     <SiTarget />
                 </div>
             </div>

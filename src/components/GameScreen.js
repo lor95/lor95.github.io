@@ -1,3 +1,4 @@
+import { createStyles } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
 import { usePlay, useStarship } from '../hooks';
@@ -8,7 +9,16 @@ import { GameStartModal } from './modals/GameStartModal';
 const debug = false;
 const highQuality = true;
 
+const useStyles = createStyles(() => ({
+    app: {
+        height: '100vh',
+        width: '100vw',
+        backgroundColor: '#0f0f0f',
+    },
+}));
+
 export const GameScreen = () => {
+    const { classes } = useStyles();
     const { playing, togglePlaying } = usePlay();
     const { health: starshipHealth } = useStarship();
     const [gameOver, showGameOver] = useState(false);
@@ -33,10 +43,10 @@ export const GameScreen = () => {
     }, [starshipHealth]);
 
     return (
-        <>
+        <div className={classes.app}>
             <GameStartModal playingHandler={togglePlayingHandler} />
             <GameOverModal visible={gameOver} />
             <GameMain debug={debug} highQuality={highQuality} />
-        </>
+        </div>
     );
 };

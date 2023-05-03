@@ -41,7 +41,7 @@ export const Planet = (props) => {
                 receiveShadow
                 castShadow
                 onClick={() => {
-                    highlight && alert(`visit planet ${props.name}`);
+                    highlight && alert(`not yet implemented`);
                 }}
             >
                 <sphereGeometry args={props.dimensions} attach="geometry" />

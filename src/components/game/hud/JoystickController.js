@@ -1,4 +1,4 @@
-import { StyleSheet, css } from 'aphrodite';
+import { createStyles } from '@mantine/core';
 import { FaFireAlt } from 'react-icons/fa';
 import ReactNipple from 'react-nipple';
 
@@ -6,7 +6,7 @@ import { defaultController } from '../../../constants';
 import { starshipFireRate } from '../../../constants';
 import { useJoystickControls } from '../../../hooks';
 
-const styles = StyleSheet.create({
+const useStyles = createStyles(() => ({
     fireContainer: {
         position: 'absolute',
         display: 'flex',
@@ -31,9 +31,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 100,
     },
-});
+}));
 
 export const JoystickController = () => {
+    const { classes } = useStyles();
     let canClick = true;
 
     const { updateController } = useJoystickControls();
@@ -60,9 +61,9 @@ export const JoystickController = () => {
 
     return (
         <>
-            <div className={css(styles.fireContainer)}>
+            <div className={classes.fireContainer}>
                 <div
-                    className={css(styles.fire)}
+                    className={classes.fire}
                     onPointerDown={() => {
                         if (canClick) {
                             handleFire(true);

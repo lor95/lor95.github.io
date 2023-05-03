@@ -1,7 +1,7 @@
-import { StyleSheet, css } from 'aphrodite';
+import { createStyles } from '@mantine/core';
 import Modal from 'react-modal';
 
-const styles = StyleSheet.create({
+const useStyles = createStyles(() => ({
     modal: {
         position: 'absolute',
         width: '50%',
@@ -33,9 +33,9 @@ const styles = StyleSheet.create({
         fontFamily: 'SpaceExplorer, sans-serif',
         textAlign: 'center',
     },
-});
+}));
 
-export const commonStyles = StyleSheet.create({
+export const useCommonStyles = createStyles(() => ({
     defaultButton: {
         appearance: 'none',
         backgroundColor: '#0f0f0f',
@@ -74,14 +74,15 @@ export const commonStyles = StyleSheet.create({
             clipPath: 'polygon(0 0, 101% 0, 101% 101%, 0 101%)',
         },
     },
-});
+}));
 
 Modal.setAppElement('#root');
 
 export const StandardModal = (props) => {
+    const { classes } = useStyles();
     return (
-        <Modal isOpen={props.visible} className={css(styles.modal)} overlayClassName={css(styles.modalOverlay)}>
-            <h3 className={css(styles.modalTitle)}>{props.title}</h3>
+        <Modal isOpen={props.visible} className={classes.modal} overlayClassName={classes.modalOverlay}>
+            <h3 className={classes.modalTitle}>{props.title}</h3>
             {props.children}
         </Modal>
     );
