@@ -1,4 +1,4 @@
-import { Text, Title, createStyles, keyframes } from '@mantine/core';
+import { Text, Title, Transition, createStyles, keyframes } from '@mantine/core';
 import { useState } from 'react';
 
 const typing = keyframes`
@@ -6,15 +6,16 @@ const typing = keyframes`
     to { width: 290px }`;
 const blinkCaret = keyframes`
     from, to { border-color: transparent }
-    50% { border-color: #ee82ee }`;
+    50% { border-color: #4d94ff }`;
 const hideCaret = keyframes`
-    from, 95% { border-color: #ee82ee }
+    from, 95% { border-color: #4d94ff }
     100% { border-color: transparent }`;
 
 const useStyles = createStyles(() => ({
     typewriterContainer: {
         color: 'white',
         opacity: 0.85,
+        userSelect: 'none',
     },
     firstCodeLine: {
         maxWidth: 290,
@@ -33,6 +34,9 @@ const useStyles = createStyles(() => ({
         borderRight: '.35rem solid',
         animation: `${blinkCaret} 1s steps(16) infinite normal`,
     },
+    biographyContainer: {
+        color: 'white',
+    },
 }));
 
 export const MainPage = ({ className }) => {
@@ -44,16 +48,16 @@ export const MainPage = ({ className }) => {
 
     const firstLine = (
         <Title order={2} style={{ display: 'flex', alignItems: 'center' }}>
-            ~&nbsp;
+            <span style={{ minWidth: 25 }}>{hideBio ? '>' : '~'}</span>
             <span className={classes.firstCodeLine}>
-                print(<span style={{ color: '#dda0dd' }}>biography</span>)
+                print(<span style={{ color: '#9c8cf2' }}>biography</span>)
             </span>
         </Title>
     );
 
     const secondLine = (
         <Title order={2} style={{ display: 'flex', alignItems: 'center' }}>
-            ~&nbsp;
+            <span style={{ minWidth: 25 }}>{'>'}</span>
             <span className={classes.secondCodeLine}>&nbsp;</span>
         </Title>
     );
@@ -77,13 +81,19 @@ export const MainPage = ({ className }) => {
                     </>
                 )}
             </div>
-            <Text fz="xl" tt="uppercase">
-                Lorenzo Giuliani
-            </Text>
-            <Title order={1}>Software Engineer</Title>
-            <Text>
-                <a href="asteroids">Play Lorenzo's Asteroids</a>
-            </Text>
+            <Transition mounted={!hideBio} transition="skew-down" duration={500} timingFunction="ease">
+                {(styles) => (
+                    <div style={styles} className={classes.biographyContainer}>
+                        <Text fz="xl" tt="uppercase">
+                            Lorenzo Giuliani
+                        </Text>
+                        <Title order={1}>Software Engineer</Title>
+                        <Text>
+                            <a href="asteroids">Play Lorenzo's Asteroids</a>
+                        </Text>
+                    </div>
+                )}
+            </Transition>
         </div>
     );
 };
