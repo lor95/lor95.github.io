@@ -1,6 +1,8 @@
-import { Affix, Button, Text, Title, Transition, createStyles, rem } from '@mantine/core';
+import { Affix, Button, Transition, createStyles, rem } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 import { FaArrowUp } from 'react-icons/fa';
+
+import { MainPage } from './website/pages/MainPage';
 
 const useStyles = createStyles(() => ({
     scroller: {
@@ -33,21 +35,10 @@ export const MainScreen = () => {
     return (
         <>
             <div className={classes.scroller} ref={viewport}>
-                <div className={classes.scrollerPage}>
-                    <Text fz="xl" tt="uppercase">
-                        Lorenzo Giuliani
-                    </Text>
-                </div>
+                <MainPage className={classes.scrollerPage} />
+                <div className={classes.scrollerPage}></div>
 
-                <div className={classes.scrollerPage}>
-                    <Title order={1}>Software Engineer</Title>
-                </div>
-
-                <div className={classes.scrollerPage}>
-                    <Text>
-                        <a href="asteroids">Play Lorenzo's Asteroids</a>
-                    </Text>
-                </div>
+                <div className={classes.scrollerPage}></div>
             </div>
             <Affix position={{ bottom: rem(20), right: rem(20) }}>
                 <Transition transition="slide-up" mounted={!isAtTop}>

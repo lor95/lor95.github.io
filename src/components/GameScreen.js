@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 
 import { usePlay, useStarship } from '../hooks';
 import { GameMain } from './game/GameMain';
-import { GameOverModal } from './modals/GameOverModal';
-import { GameStartModal } from './modals/GameStartModal';
+import { GameOverModal } from './game/modals/GameOverModal';
+import { GameStartModal } from './game/modals/GameStartModal';
 
 const debug = false;
 const highQuality = true;

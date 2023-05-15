@@ -10,3 +10,7 @@ body {
     font-family: VoyagerLight;
     src: url(../public/fonts/voyager_light.woff);
 }
+@font-face {
+    font-family: Monaco;
+    src: url(../public/fonts/monaco.woff);
+}
