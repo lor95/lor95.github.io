@@ -16,7 +16,7 @@ export const Planet = (props) => {
     };
     const { playing } = usePlay();
 
-    const base = useLoader(TextureLoader, `images/${props.baseTexture}`);
+    const base = useLoader(TextureLoader, `images/game/${props.baseTexture}`);
     base.wrapS = RepeatWrapping;
     base.wrapT = RepeatWrapping;
     base.repeat.set(1, 1);

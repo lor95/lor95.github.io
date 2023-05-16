@@ -1,4 +1,4 @@
-import { Affix, Button, Transition, createStyles, rem } from '@mantine/core';
+import { ActionIcon, Affix, Transition, createStyles, rem } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 import { FaArrowUp } from 'react-icons/fa';
 
@@ -36,20 +36,22 @@ export const MainScreen = () => {
         <>
             <div className={classes.scroller} ref={viewport}>
                 <MainPage className={classes.scrollerPage} />
-                <div className={classes.scrollerPage}></div>
-
-                <div className={classes.scrollerPage}></div>
+                <div className={classes.scrollerPage} style={{ backgroundColor: 'yellow' }}></div>
+                <div className={classes.scrollerPage} style={{ backgroundColor: 'red' }}></div>
             </div>
             <Affix position={{ bottom: rem(20), right: rem(20) }}>
                 <Transition transition="slide-up" mounted={!isAtTop}>
                     {(transitionStyles) => (
-                        <Button
-                            leftIcon={<FaArrowUp size="1rem" />}
-                            style={transitionStyles}
+                        <ActionIcon
+                            color="blue"
+                            size="xl"
+                            radius="xl"
                             onClick={() => viewport.current.scrollTo({ top: 0, behavior: 'smooth' })}
+                            style={transitionStyles}
+                            variant="filled"
                         >
-                            Scroll to top
-                        </Button>
+                            <FaArrowUp size="1.2rem" />
+                        </ActionIcon>
                     )}
                 </Transition>
             </Affix>

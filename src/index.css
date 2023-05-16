@@ -14,3 +14,15 @@ body {
     font-family: Monaco;
     src: url(../public/fonts/monaco.woff);
 }
+@font-face {
+    font-family: LatoThin;
+    src: url(../public/fonts/lato-thin.ttf);
+}
+@font-face {
+    font-family: LatoLight;
+    src: url(../public/fonts/lato-light.ttf);
+}
+@font-face {
+    font-family: LatoBold;
+    src: url(../public/fonts/lato-bold.ttf);
+}

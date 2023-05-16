@@ -6,7 +6,19 @@ import { MainScreen } from './components/MainScreen';
 
 function App() {
     return (
-        <MantineProvider>
+        <MantineProvider
+            withGlobalStyles
+            withNormalizeCSS
+            theme={{
+                fontFamily: 'LatoLight, sans-serif',
+                headings: {
+                    fontFamily: 'LatoBold, sans-serif',
+                },
+                fontSizes: {
+                    xl: '2.2rem',
+                },
+            }}
+        >
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<MainScreen />} />

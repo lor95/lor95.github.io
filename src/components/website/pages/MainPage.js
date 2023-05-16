@@ -1,5 +1,18 @@
-import { Text, Title, Transition, createStyles, keyframes } from '@mantine/core';
+import {
+    Avatar,
+    Button,
+    Container,
+    Flex,
+    Grid,
+    Indicator,
+    Text,
+    Title,
+    Transition,
+    createStyles,
+    keyframes,
+} from '@mantine/core';
 import { useState } from 'react';
+import { FaGithub, FaLinkedin, FaRocket } from 'react-icons/fa';
 
 const typing = keyframes`
     from { width: 0 }
@@ -13,7 +26,6 @@ const hideCaret = keyframes`
 
 const useStyles = createStyles(() => ({
     typewriterContainer: {
-        color: 'white',
         opacity: 0.85,
         userSelect: 'none',
     },
@@ -33,9 +45,6 @@ const useStyles = createStyles(() => ({
         display: 'inline-block',
         borderRight: '.35rem solid',
         animation: `${blinkCaret} 1s steps(16) infinite normal`,
-    },
-    biographyContainer: {
-        color: 'white',
     },
 }));
 
@@ -63,37 +72,116 @@ export const MainPage = ({ className }) => {
     );
 
     return (
-        <div
+        <Container
             className={className}
             style={{
                 background: "url('images/website/main-wallpaper.jpg')",
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
+                color: 'white',
             }}
+            fluid
         >
-            <div className={classes.typewriterContainer}>
-                {hideBio ? (
-                    <>{firstLine}</>
-                ) : (
-                    <>
-                        {firstLine}
-                        {secondLine}
-                    </>
-                )}
-            </div>
-            <Transition mounted={!hideBio} transition="skew-down" duration={500} timingFunction="ease">
-                {(styles) => (
-                    <div style={styles} className={classes.biographyContainer}>
-                        <Text fz="xl" tt="uppercase">
-                            Lorenzo Giuliani
-                        </Text>
-                        <Title order={1}>Software Engineer</Title>
-                        <Text>
-                            <a href="asteroids">Play Lorenzo's Asteroids</a>
-                        </Text>
+            <Grid m={0}>
+                <Grid.Col md={5} lg={5}>
+                    <div className={classes.typewriterContainer}>
+                        {hideBio ? (
+                            <>{firstLine}</>
+                        ) : (
+                            <>
+                                {firstLine}
+                                {secondLine}
+                            </>
+                        )}
                     </div>
-                )}
-            </Transition>
-        </div>
+                </Grid.Col>
+                <Grid.Col md={7} lg={7} style={{ paddingRight: 0, paddingLeft: 0 }}>
+                    <Transition mounted={!hideBio} transition="skew-down" duration={500} timingFunction="ease">
+                        {(styles) => (
+                            <Container style={{ ...styles, paddingRight: 0, paddingLeft: 0 }}>
+                                <Grid m={0}>
+                                    <Grid.Col span="content" style={{ paddingBottom: 0 }}>
+                                        <Indicator disabled inline>
+                                            <Avatar
+                                                style={{ border: '1px solid white' }}
+                                                src="images/website/avatar.jpg"
+                                                alt="Lorenzo's Picture"
+                                                radius="xl"
+                                                size="lg"
+                                            />
+                                        </Indicator>
+                                    </Grid.Col>
+                                    <Grid.Col xs={12} sm={10}>
+                                        <Text fz="xl" tt="uppercase" style={{ fontFamily: 'LatoThin' }}>
+                                            Lorenzo Giuliani
+                                        </Text>
+                                        <Title order={1} style={{ fontSize: '2.4rem' }}>
+                                            Software Engineer
+                                        </Title>
+                                    </Grid.Col>
+                                </Grid>
+                                <Grid m={0}>
+                                    <Grid.Col xs={12}>
+                                        <Text fz="lg">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis scelerisque
+                                            sollicitudin ligula quis commodo. Etiam convallis nunc eu egestas accumsan.
+                                            Etiam auctor dapibus ex vitae gravida. Pellentesque nec velit lobortis,
+                                            tincidunt turpis vestibulum, maximus elit.
+                                        </Text>
+                                    </Grid.Col>
+                                    <Grid.Col>
+                                        <Flex
+                                            align="flex-start"
+                                            gap={{ base: 'xs', sm: 'lg' }}
+                                            direction={{ base: 'row', sm: 'row' }}
+                                        >
+                                            <Button
+                                                component="a"
+                                                href="https://www.linkedin.com/in/lorenzogiuliani/"
+                                                variant="white"
+                                                target="_blank"
+                                                color="indigo"
+                                                fz="md"
+                                                compact
+                                                style={{ width: '7rem' }}
+                                                leftIcon={<FaLinkedin size="1rem" />}
+                                            >
+                                                Linkedin
+                                            </Button>
+
+                                            <Button
+                                                component="a"
+                                                href="https://github.com/lor95"
+                                                variant="white"
+                                                target="_blank"
+                                                color="indigo"
+                                                fz="md"
+                                                compact
+                                                style={{ width: '7rem' }}
+                                                leftIcon={<FaGithub size="1rem" />}
+                                            >
+                                                Github
+                                            </Button>
+                                            <Button
+                                                component="a"
+                                                href="asteroids"
+                                                variant="gradient"
+                                                gradient={{ from: 'indigo', to: 'cyan' }}
+                                                fz="md"
+                                                compact
+                                                style={{ width: '7rem' }}
+                                                leftIcon={<FaRocket size="0.9rem" />}
+                                            >
+                                                Asteroids
+                                            </Button>
+                                        </Flex>
+                                    </Grid.Col>
+                                </Grid>
+                            </Container>
+                        )}
+                    </Transition>
+                </Grid.Col>
+            </Grid>
+        </Container>
     );
 };

@@ -46,7 +46,7 @@ export const Space = (props) => {
     const spaceCenter = new Vector3(0, 0, 0);
     const projCoords = new Vector3(0, 0, 0);
 
-    width > height ? (textureFile = 'images/space-w.jpg') : (textureFile = 'images/space-h.jpg');
+    width > height ? (textureFile = 'images/game/space-w.jpg') : (textureFile = 'images/game/space-h.jpg');
 
     const texture = useTexture(textureFile);
 
