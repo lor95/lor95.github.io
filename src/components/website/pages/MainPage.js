@@ -191,7 +191,7 @@ export const MainPage = ({ className }) => {
                                                 </Button>
                                                 <Button
                                                     component="a"
-                                                    href="asteroids"
+                                                    href="/#/asteroids" // TODO: use BrowserRouter
                                                     variant="gradient"
                                                     gradient={{ from: 'indigo', to: 'cyan' }}
                                                     fz="md"

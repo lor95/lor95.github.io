@@ -1,10 +1,11 @@
 import { MantineProvider } from '@mantine/core';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import { GameScreen } from './components/GameScreen';
 import { MainScreen } from './components/MainScreen';
 
 function App() {
+    console.log(process.env.PUBLIC_URL);
     return (
         <MantineProvider
             withGlobalStyles
@@ -19,13 +20,14 @@ function App() {
                 },
             }}
         >
-            <BrowserRouter basename="/">
+            <HashRouter>
+                {/* TODO: use BrowserRouter*/}
                 <Routes>
                     <Route path="/" element={<MainScreen />} />
                     <Route path="/asteroids" element={<GameScreen />} />
                     <Route path="/*" element={<Navigate to="/" />} />
                 </Routes>
-            </BrowserRouter>
+            </HashRouter>
         </MantineProvider>
     );
 }
