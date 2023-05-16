@@ -19,7 +19,7 @@ function App() {
                 },
             }}
         >
-            <BrowserRouter>
+            <BrowserRouter basename="/">
                 <Routes>
                     <Route path="/" element={<MainScreen />} />
                     <Route path="/asteroids" element={<GameScreen />} />
