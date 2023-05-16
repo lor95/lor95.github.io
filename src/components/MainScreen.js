@@ -36,8 +36,8 @@ export const MainScreen = () => {
         <>
             <div className={classes.scroller} ref={viewport}>
                 <MainPage className={classes.scrollerPage} />
-                <div className={classes.scrollerPage} style={{ backgroundColor: 'yellow' }}></div>
-                <div className={classes.scrollerPage} style={{ backgroundColor: 'red' }}></div>
+                {/* <div className={classes.scrollerPage} style={{ backgroundColor: 'yellow' }}></div>
+                <div className={classes.scrollerPage} style={{ backgroundColor: 'red' }}></div> */}
             </div>
             <Affix position={{ bottom: rem(20), right: rem(20) }}>
                 <Transition transition="slide-up" mounted={!isAtTop}>
