@@ -5,7 +5,6 @@ import { GameScreen } from './components/GameScreen';
 import { MainScreen } from './components/MainScreen';
 
 function App() {
-    console.log(process.env.PUBLIC_URL);
     return (
         <MantineProvider
             withGlobalStyles

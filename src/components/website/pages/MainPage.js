@@ -92,7 +92,13 @@ export const MainPage = ({ className }) => {
                     <MediaQuery largerThan="md" styles={{ display: 'none' }}>
                         <Space h="lg" />
                     </MediaQuery>
-                    <Center inline style={{ height: '100%' }}>
+                    <Center
+                        inline
+                        sx={(theme) => ({
+                            [theme.fn.largerThan('md')]: { paddingLeft: '1.5rem' },
+                            height: '100%',
+                        })}
+                    >
                         <div className={classes.typewriterContainer}>
                             {hideBio ? (
                                 <>{firstLine}</>
@@ -124,7 +130,7 @@ export const MainPage = ({ className }) => {
                                         <Grid.Col span="content" style={{ paddingBottom: 0 }}>
                                             <Indicator disabled inline>
                                                 <Avatar
-                                                    style={{ border: '2px solid white' }}
+                                                    style={{ border: '2px solid white', userSelect: 'none' }}
                                                     src="images/website/avatar.jpg"
                                                     alt="Lorenzo's Picture"
                                                     radius="xl"
@@ -171,7 +177,7 @@ export const MainPage = ({ className }) => {
                                                     target="_blank"
                                                     fz="md"
                                                     compact
-                                                    style={{ width: '7rem' }}
+                                                    style={{ width: '7.25rem' }}
                                                     leftIcon={<FaLinkedin size="1rem" />}
                                                 >
                                                     Linkedin
@@ -184,7 +190,7 @@ export const MainPage = ({ className }) => {
                                                     target="_blank"
                                                     fz="md"
                                                     compact
-                                                    style={{ width: '7rem' }}
+                                                    style={{ width: '7.25rem' }}
                                                     leftIcon={<FaGithub size="1rem" />}
                                                 >
                                                     Github
@@ -196,7 +202,7 @@ export const MainPage = ({ className }) => {
                                                     gradient={{ from: 'indigo', to: 'cyan' }}
                                                     fz="md"
                                                     compact
-                                                    style={{ width: '7rem' }}
+                                                    style={{ width: '7.25rem' }}
                                                     leftIcon={<FaRocket size="0.9rem" />}
                                                 >
                                                     Asteroids
