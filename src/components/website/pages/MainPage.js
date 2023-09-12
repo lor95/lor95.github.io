@@ -10,6 +10,7 @@ import {
     Space,
     Text,
     Title,
+    Tooltip,
     Transition,
     createStyles,
     keyframes,
@@ -162,10 +163,10 @@ export const MainPage = ({ className }) => {
                                     <Grid m={0}>
                                         <Grid.Col xs={12}>
                                             <Text fz="lg">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis
-                                                scelerisque sollicitudin ligula quis commodo. Etiam convallis nunc eu
-                                                egestas accumsan. Etiam auctor dapibus ex vitae gravida. Pellentesque
-                                                nec velit lobortis, tincidunt turpis vestibulum, maximus elit.
+                                                Tech enthusiast. Interested in Software Engineering and Artificial
+                                                Intelligence. Working with Javascript and Python to provide fancy
+                                                solutions. Kubernetes rules! Currently working as Technical Project
+                                                Manager and Fullstack Software Engineer in Zucchetti.
                                             </Text>
                                         </Grid.Col>
                                         <Grid.Col>
@@ -195,18 +196,30 @@ export const MainPage = ({ className }) => {
                                                 >
                                                     Github
                                                 </Button>
-                                                <Button
-                                                    component="a"
-                                                    href="/#/asteroids" // TODO: use BrowserRouter
-                                                    variant="gradient"
-                                                    gradient={{ from: 'indigo', to: 'cyan' }}
-                                                    fz="md"
-                                                    compact
-                                                    style={{ width: '7.25rem' }}
-                                                    leftIcon={<FaRocket size="0.9rem" />}
+                                                <Tooltip
+                                                    withArrow
+                                                    label={
+                                                        <Text ta="center">
+                                                            Play Asteroids, ThreeJS-based game
+                                                            <br />
+                                                            (Work in Progress)
+                                                        </Text>
+                                                    }
+                                                    color="blue"
                                                 >
-                                                    Asteroids
-                                                </Button>
+                                                    <Button
+                                                        component="a"
+                                                        href="/#/asteroids" // TODO: use BrowserRouter
+                                                        variant="gradient"
+                                                        gradient={{ from: 'indigo', to: 'cyan' }}
+                                                        fz="md"
+                                                        compact
+                                                        style={{ width: '7.25rem' }}
+                                                        leftIcon={<FaRocket size="0.9rem" />}
+                                                    >
+                                                        Asteroids
+                                                    </Button>
+                                                </Tooltip>
                                             </Flex>
                                         </Grid.Col>
                                     </Grid>
